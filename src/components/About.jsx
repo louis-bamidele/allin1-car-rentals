@@ -16,7 +16,7 @@ export default function About() {
         <Reveal className="lg:col-span-6" variants={fadeUp}>
           <div className="relative">
             <img
-              src="https://www.pexels.com/photo/colleagues-having-a-team-building-7793692/"
+              src="https://images.pexels.com/photos/7688161/pexels-photo-7688161.jpeg"
               alt="Friendly team handing over a rental car"
               className="rounded-3xl shadow-card w-full object-cover aspect-[4/3]"
             />

@@ -50,11 +50,31 @@ export default function Footer() {
         <div className="md:col-span-2">
           <h4 className="text-white font-semibold">Explore</h4>
           <ul className="mt-4 space-y-2 text-sm text-white/75">
-            <li><Link to="/" className="hover:text-gold-400">Home</Link></li>
-            <li><Link to="/cars" className="hover:text-gold-400">Our Cars</Link></li>
-            <li><a href="/#services" className="hover:text-gold-400">Services</a></li>
-            <li><a href="/#about" className="hover:text-gold-400">About</a></li>
-            <li><a href="/#contact" className="hover:text-gold-400">Contact</a></li>
+            <li>
+              <Link to="/" className="hover:text-gold-400">
+                Home
+              </Link>
+            </li>
+            <li>
+              <Link to="/cars" className="hover:text-gold-400">
+                Our Cars
+              </Link>
+            </li>
+            <li>
+              <a href="/#services" className="hover:text-gold-400">
+                Services
+              </a>
+            </li>
+            <li>
+              <a href="/#about" className="hover:text-gold-400">
+                About
+              </a>
+            </li>
+            <li>
+              <a href="/#contact" className="hover:text-gold-400">
+                Contact
+              </a>
+            </li>
           </ul>
         </div>
 
@@ -62,7 +82,6 @@ export default function Footer() {
           <h4 className="text-white font-semibold">Contact</h4>
           <ul className="mt-4 space-y-2 text-sm text-white/75">
             <li>+5999 517 8686</li>
-            <li>info@allin1carrental.com</li>
             <li>Curaçao, Caribbean</li>
             <li>Daily, 8:00 AM to 5:00 PM</li>
           </ul>
@@ -73,16 +92,25 @@ export default function Footer() {
           <p className="mt-3 text-sm text-white/75">
             Send us your dates and we will confirm availability the same day.
           </p>
-          <Link to="/#book" className="btn-primary mt-4">Book now</Link>
+          <Link to="/#book" className="btn-primary mt-4">
+            Book now
+          </Link>
         </div>
       </div>
 
       <div className="border-t border-white/10">
         <div className="container-x py-5 flex flex-col md:flex-row gap-3 items-center justify-between text-xs text-white/60">
-          <div>© {new Date().getFullYear()} All in 1 Car Rentals. All rights reserved.</div>
+          <div>
+            © {new Date().getFullYear()} All in 1 Car Rentals. All rights
+            reserved.
+          </div>
           <div className="flex items-center gap-4">
-            <a href="#" className="hover:text-gold-400">Terms and Conditions</a>
-            <a href="#" className="hover:text-gold-400">Privacy Policy</a>
+            <a href="#" className="hover:text-gold-400">
+              Terms and Conditions
+            </a>
+            <a href="#" className="hover:text-gold-400">
+              Privacy Policy
+            </a>
           </div>
         </div>
       </div>
