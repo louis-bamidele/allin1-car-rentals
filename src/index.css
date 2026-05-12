@@ -1,0 +1,52 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 80px;
+  }
+  body {
+    @apply font-sans bg-white text-slate-700 antialiased;
+  }
+  h1, h2, h3, h4 {
+    @apply font-display text-navy-900;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-gold-500 px-5 py-3 text-sm sm:text-base font-display font-semibold text-navy-900 shadow-cta transition hover:bg-gold-400 hover:-translate-y-0.5 active:translate-y-0;
+  }
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-navy-900 px-5 py-3 text-sm sm:text-base font-display font-semibold text-white transition hover:bg-navy-700;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-navy-900/20 px-5 py-3 text-sm sm:text-base font-display font-semibold text-navy-900 transition hover:bg-navy-50;
+  }
+  .section {
+    @apply py-12 sm:py-16 md:py-20 lg:py-24;
+  }
+  .container-x {
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+  .eyebrow {
+    @apply inline-block text-xs font-semibold uppercase tracking-[0.18em] text-gold-600;
+  }
+  .card {
+    @apply rounded-2xl bg-white p-6 shadow-card;
+  }
+}
