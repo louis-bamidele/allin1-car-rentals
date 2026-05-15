@@ -6,6 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="Book a clean, well kept rental car with All in 1 Car Rentals. Daily, weekly, and long term rates with free airport delivery on Curaçao." />
     <title>All in 1 Car Rentals | Your Key to a Rental Car</title>
+
+    <!-- Preconnect to external image hosts so DNS + TLS are ready instantly -->
+    <link rel="preconnect" href="https://images.unsplash.com" />
+    <link rel="preconnect" href="https://res.cloudinary.com" />
+
+    <!-- Preload the two above-the-fold banner images before React even starts -->
+    <link rel="preload" as="image" href="/images/curacao-wide.jpg" fetchpriority="high" />
+    <link rel="preload" as="image" href="/images/curacao-portrait.jpg" fetchpriority="low" />
+
+    <!-- Preload the hero background (second section, loads while user reads banner) -->
+    <link rel="preload" as="image" href="https://images.unsplash.com/photo-1502877338535-766e1452684a?auto=format&fit=crop&w=2000&q=80" fetchpriority="low" />
   </head>
   <body>
     <div id="root"></div>

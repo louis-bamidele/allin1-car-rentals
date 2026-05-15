@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
-import { fleet, categories } from "../data/fleet";
+import { getCars } from "../lib/api";
 import { SeatIcon, GearIcon, FuelIcon, ArrowIcon } from "../components/Icons";
 import CarsLoader from "../components/CarsLoader";
+
+const CATEGORIES = ["All", "Economy", "Comfort", "SUV"];
 
 const page = {
   initial: { opacity: 0 },
@@ -27,6 +29,7 @@ export default function OurCars() {
   const [active, setActive] = useState("All");
   const [loading, setLoading] = useState(true);
   const [messageIndex, setMessageIndex] = useState(0);
+  const [fleet, setFleet] = useState([]);
 
   useEffect(() => {
     let cancelled = false;
@@ -36,17 +39,18 @@ export default function OurCars() {
       setMessageIndex((i) => Math.min(i + 1, 3));
     }, MESSAGE_STEP_MS);
 
-    const imagesToPreload = [
-      ...fleet.map((c) => c.image),
-      ...fleet.flatMap((c) => (c.gallery ? c.gallery.slice(0, 1) : [])),
-    ];
-
-    Promise.all(imagesToPreload.map(preloadImage)).then(() => {
+    getCars().then((data) => {
+      if (!cancelled) setFleet(data);
+      const imagesToPreload = data.map((c) => c.image);
+      return Promise.all(imagesToPreload.map(preloadImage));
+    }).then(() => {
       const elapsed = performance.now() - start;
       const remaining = Math.max(0, MIN_LOADER_MS - elapsed);
       setTimeout(() => {
         if (!cancelled) setLoading(false);
       }, remaining);
+    }).catch(() => {
+      if (!cancelled) setLoading(false);
     });
 
     return () => {
@@ -55,8 +59,7 @@ export default function OurCars() {
     };
   }, []);
 
-  const cars =
-    active === "All" ? fleet : fleet.filter((c) => c.category === active);
+  const cars = active === "All" ? fleet : fleet.filter((c) => c.category === active);
 
   return (
     <AnimatePresence mode="wait">
@@ -65,7 +68,49 @@ export default function OurCars() {
       ) : (
         <motion.div key="content" variants={page} initial="initial" animate="animate" exit="exit">
           <section className="pt-28 sm:pt-32 lg:pt-40 pb-10 bg-navy-900 text-white relative overflow-hidden">
+            {/* Gold glow blob */}
             <div className="absolute -right-32 -top-32 w-96 h-96 rounded-full bg-gold-500/10 blur-3xl" />
+
+            {/* Decorative line drawing — pure SVG, zero network cost */}
+            <svg
+              className="absolute inset-0 w-full h-full pointer-events-none"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
+            >
+              <defs>
+                {/* Fine diagonal lines repeating tile */}
+                <pattern id="oc-diag" x="0" y="0" width="30" height="30" patternUnits="userSpaceOnUse">
+                  <line x1="0" y1="30" x2="30" y2="0" stroke="white" strokeWidth="0.5" strokeOpacity="0.06" />
+                </pattern>
+              </defs>
+
+              {/* Base diagonal texture */}
+              <rect width="100%" height="100%" fill="url(#oc-diag)" />
+
+              {/* Concentric arcs radiating from top-right corner */}
+              <g stroke="white" strokeWidth="0.8" fill="none" strokeOpacity="0.07">
+                <circle cx="100%" cy="0" r="140" />
+                <circle cx="100%" cy="0" r="230" />
+                <circle cx="100%" cy="0" r="320" />
+                <circle cx="100%" cy="0" r="410" />
+                <circle cx="100%" cy="0" r="500" />
+              </g>
+
+              {/* Horizontal speed lines — left side, varying lengths */}
+              <g stroke="white" strokeWidth="0.7" strokeOpacity="0.05">
+                <line x1="0" y1="60%" x2="55%" y2="60%" />
+                <line x1="0" y1="72%" x2="40%" y2="72%" />
+                <line x1="0" y1="84%" x2="25%" y2="84%" />
+              </g>
+
+              {/* Cross-hatch accent — bottom-left corner */}
+              <g stroke="white" strokeWidth="0.5" strokeOpacity="0.05">
+                <line x1="0" y1="100%" x2="12%" y2="0%" />
+                <line x1="5%" y1="100%" x2="17%" y2="0%" />
+                <line x1="10%" y1="100%" x2="22%" y2="0%" />
+              </g>
+            </svg>
+
             <div className="container-x relative">
               <span className="eyebrow text-gold-400">Our Cars</span>
               <h1 className="mt-3 text-white text-3xl sm:text-4xl md:text-5xl font-display font-bold leading-tight">
@@ -82,7 +127,7 @@ export default function OurCars() {
           <section className="section">
             <div className="container-x">
               <div className="flex flex-wrap gap-2 mb-8">
-                {categories.map((c) => (
+                {CATEGORIES.map((c) => (
                   <button
                     key={c}
                     onClick={() => setActive(c)}
@@ -100,15 +145,16 @@ export default function OurCars() {
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
                 {cars.map((car) => (
                   <article
-                    key={car.id}
+                    key={car._id || car.slug}
                     className="card overflow-hidden p-0 flex flex-col transition hover:-translate-y-1.5 hover:shadow-cta"
                   >
-                    <Link to={`/car/${car.id}`} className="block group">
+                    <Link to={`/car/${car.slug}`} className="block group">
                       <div className="aspect-[16/10] overflow-hidden bg-gradient-to-br from-cream-50 to-cream-100">
                         <img
                           src={car.image}
                           alt={car.name}
                           className="w-full h-full object-cover transition duration-500 group-hover:scale-105"
+                          decoding="async"
                         />
                       </div>
                     </Link>
@@ -124,7 +170,7 @@ export default function OurCars() {
                       </div>
                       <h2 className="mt-1 text-xl font-semibold">
                         <Link
-                          to={`/car/${car.id}`}
+                          to={`/car/${car.slug}`}
                           className="hover:text-gold-600 transition"
                         >
                           {car.name}
@@ -142,7 +188,7 @@ export default function OurCars() {
                           <FuelIcon className="w-4 h-4 text-navy-700" /> {car.fuel}
                         </li>
                       </ul>
-                      <Link to={`/car/${car.id}`} className="btn-secondary mt-5">
+                      <Link to={`/car/${car.slug}`} className="btn-secondary mt-5">
                         More about this car <ArrowIcon className="w-4 h-4" />
                       </Link>
                     </div>

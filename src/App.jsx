@@ -7,9 +7,13 @@ import ScrollToTop from "./components/ScrollToTop";
 import Home from "./pages/Home";
 import OurCars from "./pages/OurCars";
 import CarDetails from "./pages/CarDetails";
+import Admin from "./pages/Admin";
+import Terms from "./pages/Terms";
 
 export default function App() {
   const location = useLocation();
+  const isAdmin = location.pathname.startsWith("/admin");
+
   return (
     <div className="overflow-x-hidden">
       <ScrollToTop />
@@ -20,12 +24,14 @@ export default function App() {
             <Route path="/" element={<Home />} />
             <Route path="/cars" element={<OurCars />} />
             <Route path="/car/:id" element={<CarDetails />} />
+            <Route path="/admin" element={<Admin />} />
+            <Route path="/terms" element={<Terms />} />
             <Route path="*" element={<Home />} />
           </Routes>
         </AnimatePresence>
       </main>
-      <Footer />
-      <FloatingCTA />
+      {!isAdmin && <Footer />}
+      {!isAdmin && <FloatingCTA />}
     </div>
   );
 }

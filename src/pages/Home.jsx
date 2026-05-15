@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import DestinationBanner from "../components/DestinationBanner";
 import Hero from "../components/Hero";
 import WhyUs from "../components/WhyUs";
 import Fleet from "../components/Fleet";
@@ -18,6 +19,7 @@ const page = {
 export default function Home() {
   return (
     <motion.div variants={page} initial="initial" animate="animate" exit="exit">
+      <DestinationBanner />
       <Hero />
       <WhyUs />
       <Fleet />

@@ -23,7 +23,7 @@ export default function Hero() {
   return (
     <section
       id="home"
-      className="relative pt-24 sm:pt-28 lg:pt-36 pb-14 sm:pb-20 lg:pb-28 overflow-hidden"
+      className="relative pt-14 sm:pt-20 lg:pt-28 pb-14 sm:pb-20 lg:pb-28 overflow-hidden"
     >
       <motion.div
         initial={{ scale: 1.08, opacity: 0.6 }}

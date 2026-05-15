@@ -92,7 +92,7 @@ export default function Footer() {
           <p className="mt-3 text-sm text-white/75">
             Send us your dates and we will confirm availability the same day.
           </p>
-          <Link to="/#book" className="btn-primary mt-4">
+          <Link to="/cars" className="btn-primary mt-4">
             Book now
           </Link>
         </div>
@@ -105,12 +105,12 @@ export default function Footer() {
             reserved.
           </div>
           <div className="flex items-center gap-4">
-            <a href="#" className="hover:text-gold-400">
+            <Link to="/terms" className="hover:text-gold-400">
               Terms and Conditions
-            </a>
-            <a href="#" className="hover:text-gold-400">
+            </Link>
+            <Link to="/terms#privacy" className="hover:text-gold-400">
               Privacy Policy
-            </a>
+            </Link>
           </div>
         </div>
       </div>

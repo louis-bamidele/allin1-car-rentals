@@ -1,7 +1,7 @@
-import { useState } from "react";
-import { Link, useParams, Navigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
-import { findCar, fleet } from "../data/fleet";
+import { getCar, getCars } from "../lib/api";
 import {
   SeatIcon,
   GearIcon,
@@ -23,12 +23,45 @@ const page = {
 
 export default function CarDetails() {
   const { id } = useParams();
-  const car = findCar(id);
+  const navigate = useNavigate();
+  const [car, setCar] = useState(null);
+  const [related, setRelated] = useState([]);
   const [activeImg, setActiveImg] = useState(0);
+  const [fetching, setFetching] = useState(true);
 
-  if (!car) return <Navigate to="/cars" replace />;
+  useEffect(() => {
+    setFetching(true);
+    setActiveImg(0);
+    getCar(id)
+      .then((data) => {
+        setCar(data);
+        return getCars();
+      })
+      .then((all) => {
+        setRelated(all.filter((c) => c.slug !== id && c.category === car?.category).slice(0, 3));
+      })
+      .catch(() => navigate("/cars", { replace: true }))
+      .finally(() => setFetching(false));
+  }, [id]);
 
-  const related = fleet.filter((c) => c.id !== car.id && c.category === car.category).slice(0, 3);
+  useEffect(() => {
+    if (car) {
+      getCars().then((all) =>
+        setRelated(all.filter((c) => c.slug !== id && c.category === car.category).slice(0, 3))
+      ).catch(() => {});
+    }
+  }, [car]);
+
+  if (fetching) {
+    return (
+      <div className="min-h-screen bg-navy-900 flex items-center justify-center">
+        <div className="w-12 h-12 rounded-full border-4 border-white/10 border-t-gold-500 animate-spin" />
+      </div>
+    );
+  }
+
+  if (!car) return null;
+
   const reserveText = encodeURIComponent(
     `Hi All in 1, I would like to reserve the ${car.name} at $${car.dailyRate}/day. Please share availability.`
   );
@@ -58,6 +91,8 @@ export default function CarDetails() {
                   src={car.gallery[activeImg]}
                   alt={`${car.name} photo ${activeImg + 1}`}
                   className="absolute inset-0 w-full h-full object-cover"
+                  fetchPriority="high"
+                  decoding="async"
                   initial={{ opacity: 0, scale: 1.02 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0 }}
@@ -77,7 +112,7 @@ export default function CarDetails() {
                   }`}
                   aria-label={`View photo ${i + 1}`}
                 >
-                  <img src={src} alt="" className="w-full h-full object-cover" />
+                  <img src={src} alt="" className="w-full h-full object-cover" loading="lazy" decoding="async" />
                 </button>
               ))}
             </div>
@@ -239,9 +274,9 @@ export default function CarDetails() {
               className="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6"
             >
               {related.map((c) => (
-                <motion.div key={c.id} variants={fadeUp} whileHover={{ y: -4 }}>
+                <motion.div key={c._id || c.slug} variants={fadeUp} whileHover={{ y: -4 }}>
                   <Link
-                    to={`/car/${c.id}`}
+                    to={`/car/${c.slug}`}
                     className="card p-0 overflow-hidden block"
                   >
                     <div className="aspect-[16/10] overflow-hidden">
@@ -249,6 +284,8 @@ export default function CarDetails() {
                         src={c.image}
                         alt={c.name}
                         className="w-full h-full object-cover hover:scale-105 transition duration-500"
+                        loading="lazy"
+                        decoding="async"
                       />
                     </div>
                     <div className="p-5">
