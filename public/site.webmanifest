@@ -1,6 +1,6 @@
 {
-  "name": "MyWebSite",
-  "short_name": "MySite",
+  "name": "All in 1 Car Rentals",
+  "short_name": "All in 1",
   "icons": [
     {
       "src": "/web-app-manifest-192x192.png",

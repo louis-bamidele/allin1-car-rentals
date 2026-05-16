@@ -2,20 +2,165 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Book a clean, well kept rental car with All in 1 Car Rentals. Daily, weekly, and long term rates with free airport delivery on Curaçao." />
-    <title>All in 1 Car Rentals | Your Key to a Rental Car</title>
 
-    <!-- Preconnect to external image hosts so DNS + TLS are ready instantly -->
+    <!-- Favicons & manifest -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#0D0B61" />
+
+    <!-- Primary SEO -->
+    <title>Car Rental Curaçao | All in 1 Car Rentals</title>
+    <meta name="description" content="Rent a car in Curaçao from $35/day. Economy, comfort & SUV rentals with free airport delivery, unlimited mileage, and all-inclusive pricing. Locally owned. Book online in minutes." />
+    <meta name="keywords" content="car rental Curaçao, rent a car Curaçao, Curaçao car hire, rental car Willemstad, Hato Airport car rental, cheap car rental Curaçao, SUV rental Curaçao, All in 1 Car Rentals" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://allin1carrental.com/" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://allin1carrental.com/" />
+    <meta property="og:site_name" content="All in 1 Car Rentals" />
+    <meta property="og:title" content="Car Rental Curaçao | All in 1 Car Rentals" />
+    <meta property="og:description" content="Rent a car in Curaçao from $35/day. Free airport delivery, unlimited mileage & all-inclusive pricing. Economy, Comfort & SUV models available." />
+    <meta property="og:image" content="https://allin1carrental.com/images/curacao-wide.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Willemstad waterfront, Curaçao — All in 1 Car Rentals" />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Car Rental Curaçao | All in 1 Car Rentals" />
+    <meta name="twitter:description" content="Rent a car in Curaçao from $35/day. Free airport delivery, unlimited mileage & all-inclusive pricing." />
+    <meta name="twitter:image" content="https://allin1carrental.com/images/curacao-wide.jpg" />
+    <meta name="twitter:image:alt" content="Willemstad waterfront, Curaçao — All in 1 Car Rentals" />
+
+    <!-- Structured data: CarRental (LocalBusiness) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "CarRental",
+      "name": "All in 1 Car Rentals",
+      "alternateName": "All in 1 Curacao",
+      "url": "https://allin1carrental.com",
+      "logo": "https://allin1carrental.com/favicon.svg",
+      "image": "https://allin1carrental.com/images/curacao-wide.jpg",
+      "description": "Locally owned car rental company in Curaçao offering economy, comfort and SUV rentals with free airport delivery, unlimited mileage and all-inclusive pricing.",
+      "telephone": "+59995178686",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Willemstad",
+        "addressRegion": "Curaçao",
+        "addressCountry": "CW"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 12.1696,
+        "longitude": -68.9900
+      },
+      "openingHoursSpecification": {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
+        "opens": "08:00",
+        "closes": "17:00"
+      },
+      "priceRange": "$$",
+      "currenciesAccepted": "USD",
+      "paymentAccepted": "Cash, Bank Transfer",
+      "areaServed": {
+        "@type": "Place",
+        "name": "Curaçao"
+      },
+      "sameAs": [
+        "https://wa.me/59995178686"
+      ]
+    }
+    </script>
+
+    <!-- Structured data: FAQPage -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is the minimum age to rent a car in Curaçao?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The minimum age is 23. Please bring a valid driver's license and a passport or ID. No credit card is required."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How does the security deposit work?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "We collect a $300 cash deposit at pickup. It is fully refunded at the end of the rental once the car is returned in the same condition."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is insurance included in the car rental price?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Third-party liability insurance is included with every rental. Full All-Risk coverage can be added for an extra charge at pickup."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do you deliver to Hato Airport or my hotel in Curaçao?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Delivery is free for rentals of 5 days or more. For shorter rentals there is a flat $15 delivery fee. Just send your address or flight details and we will sort the rest."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is mileage limited on Curaçao car rentals?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "All rentals come with unlimited mileage so you can explore the whole island without worrying about the odometer. A child seat can be added for $10 per day."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do you offer weekly or monthly rental discounts?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. We offer discounted weekly and monthly rental rates. The longer you stay, the better the rate. Contact us for an exact quote."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What payment methods do you accept?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "We accept cash and bank transfers. We do not accept credit or debit card payments at this time."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is your cancellation policy?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Cancellations are charged 50% of the total rental amount. If you need to change your dates, reach out as early as possible and we will do our best to help."
+          }
+        }
+      ]
+    }
+    </script>
+
+    <!-- Preconnect to external image hosts -->
     <link rel="preconnect" href="https://images.unsplash.com" />
     <link rel="preconnect" href="https://res.cloudinary.com" />
 
-    <!-- Preload the two above-the-fold banner images before React even starts -->
+    <!-- Preload above-the-fold images -->
     <link rel="preload" as="image" href="/images/curacao-wide.jpg" fetchpriority="high" />
     <link rel="preload" as="image" href="/images/curacao-portrait.jpg" fetchpriority="low" />
-
-    <!-- Preload the hero background (second section, loads while user reads banner) -->
     <link rel="preload" as="image" href="https://images.unsplash.com/photo-1502877338535-766e1452684a?auto=format&fit=crop&w=2000&q=80" fetchpriority="low" />
   </head>
   <body>
