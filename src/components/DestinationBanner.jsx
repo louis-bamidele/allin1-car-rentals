@@ -36,11 +36,13 @@ export default function DestinationBanner() {
               One island,{" "}
               <span className="text-gold-400">every road waiting.</span>
             </h2>
-            <p className="mt-3 text-white text-sm sm:text-base max-w-lg backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl px-4 py-3">
-              From the colorful streets of Willemstad to the wild west coast,
-              the whole island is yours to discover. Whether you're here for a
-              week or a month, explore it all at your own pace with a clean,
-              reliable rental car.
+            <p className="mt-3 text-sm sm:text-base max-w-lg pr-10 lg:pr-20">
+              <span className="text-white backdrop-blur-md bg-white/10 [box-decoration-break:clone] [-webkit-box-decoration-break:clone] px-1.5 py-0.5 rounded-md leading-relaxed">
+                From the colorful streets of Willemstad to the wild west coast,
+                the whole island is yours to discover. Whether you're here for a
+                week or a month, explore it all at your own pace with a clean,
+                reliable rental car.
+              </span>
             </p>
             <Link
               to="/cars"
