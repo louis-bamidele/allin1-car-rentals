@@ -8,9 +8,11 @@
   html {
     scroll-behavior: smooth;
     scroll-padding-top: 80px;
+    overflow-x: hidden;
   }
   body {
     @apply font-sans bg-white text-slate-700 antialiased;
+    overflow-x: hidden;
   }
   h1, h2, h3, h4 {
     @apply font-display text-navy-900;
