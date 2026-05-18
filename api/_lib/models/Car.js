@@ -22,6 +22,7 @@ const carSchema = new mongoose.Schema(
     longDescription: { type: String, required: true },
     features: { type: [String], required: true },
     highlights: { type: [String], required: true },
+    available: { type: Boolean, default: true },
   },
   { timestamps: true }
 );

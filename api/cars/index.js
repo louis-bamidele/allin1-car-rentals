@@ -16,10 +16,17 @@ const photoFields = upload.fields([
 export default async function handler(req, res) {
   await connectDB();
 
-  // GET /api/cars — public
+  // GET /api/cars        — public, only available cars
+  // GET /api/cars?all=1  — admin only, returns all cars including unavailable
   if (req.method === "GET") {
     try {
-      const cars = await Car.find()
+      const showAll = req.query.all === "1";
+      if (showAll) {
+        const user = await verifyAuth(req, res);
+        if (!user) return;
+      }
+      const filter = showAll ? {} : { available: { $ne: false } };
+      const cars = await Car.find(filter)
         .select("-longDescription -features -highlights -gallery")
         .sort({ createdAt: 1 });
       return res.json(cars);

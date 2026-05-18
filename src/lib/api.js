@@ -8,6 +8,16 @@ async function apiFetch(path, opts = {}) {
 }
 
 export const getCars = () => apiFetch("/api/cars");
+
+export const getAdminCars = (token) =>
+  apiFetch("/api/cars?all=1", { headers: { Authorization: `Bearer ${token}` } });
+
+export const toggleAvailability = (id, available, token) =>
+  apiFetch(`/api/cars/${id}/toggle`, {
+    method: "PATCH",
+    headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+    body: JSON.stringify({ available }),
+  });
 export const getCar = (slug) => apiFetch(`/api/cars/${slug}`);
 
 export const login = (email, password) =>

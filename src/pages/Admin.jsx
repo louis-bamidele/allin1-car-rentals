@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { login, getCars, addCar, updateCar, deleteCar } from "../lib/api";
+import { login, getAdminCars, addCar, updateCar, deleteCar, toggleAvailability } from "../lib/api";
 
 const CATEGORIES = ["Economy", "Comfort", "SUV"];
 const TRANSMISSIONS = ["Automatic", "Manual"];
@@ -368,11 +368,12 @@ function Dashboard({ token, onLogout }) {
   const [loading, setLoading] = useState(true);
   const [deleteId, setDeleteId] = useState(null);
   const [deleting, setDeleting] = useState(false);
+  const [togglingId, setTogglingId] = useState(null);
   const [tab, setTab] = useState("fleet");
   const [editCar, setEditCar] = useState(null);
 
   async function loadCars() {
-    try { setCars(await getCars()); }
+    try { setCars(await getAdminCars(token)); }
     catch { setCars([]); }
     finally { setLoading(false); }
   }
@@ -389,6 +390,18 @@ function Dashboard({ token, onLogout }) {
     } finally {
       setDeleting(false);
       setDeleteId(null);
+    }
+  }
+
+  async function handleToggle(car) {
+    setTogglingId(car._id);
+    try {
+      const updated = await toggleAvailability(car._id, !car.available, token);
+      setCars((prev) => prev.map((c) => c._id === car._id ? { ...c, available: updated.available } : c));
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setTogglingId(null);
     }
   }
 
@@ -441,28 +454,55 @@ function Dashboard({ token, onLogout }) {
               <p className="text-slate-500 text-sm">No cars yet. Add your first one.</p>
             ) : (
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {cars.map((car) => (
-                  <div key={car._id} className="bg-white rounded-2xl shadow-card overflow-hidden">
-                    <div className="aspect-[16/10] bg-cream-100">
-                      <img src={car.image} alt={car.name} className="w-full h-full object-cover" />
-                    </div>
-                    <div className="p-4">
-                      <span className="text-xs font-semibold text-gold-600 uppercase tracking-wider">{car.category}</span>
-                      <h3 className="font-semibold text-navy-900">{car.name}</h3>
-                      <p className="text-sm text-slate-500">${car.dailyRate} / day · {car.year} · {car.color}</p>
-                      <div className="mt-3 flex gap-2">
-                        <button onClick={() => openEdit(car)}
-                          className="flex-1 text-sm text-navy-900 border border-navy-200 hover:bg-navy-50 rounded-xl py-1.5 transition font-medium">
-                          Edit
+                {cars.map((car) => {
+                  const isAvailable = car.available !== false;
+                  const isToggling = togglingId === car._id;
+                  return (
+                    <div key={car._id} className={`bg-white rounded-2xl shadow-card overflow-hidden transition ${!isAvailable ? "opacity-60" : ""}`}>
+                      <div className="aspect-[16/10] bg-cream-100 relative">
+                        <img src={car.image} alt={car.name} className="w-full h-full object-cover" />
+                        {!isAvailable && (
+                          <span className="absolute top-2 left-2 bg-red-600 text-white text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full">
+                            Unavailable
+                          </span>
+                        )}
+                      </div>
+                      <div className="p-4">
+                        <span className="text-xs font-semibold text-gold-600 uppercase tracking-wider">{car.category}</span>
+                        <h3 className="font-semibold text-navy-900">{car.name}</h3>
+                        <p className="text-sm text-slate-500">${car.dailyRate} / day · {car.year} · {car.color}</p>
+
+                        {/* Availability toggle */}
+                        <button
+                          onClick={() => handleToggle(car)}
+                          disabled={isToggling}
+                          className={`mt-3 w-full flex items-center justify-between px-3 py-2 rounded-xl border text-sm font-medium transition disabled:opacity-50 ${
+                            isAvailable
+                              ? "border-green-200 bg-green-50 text-green-700 hover:bg-green-100"
+                              : "border-red-200 bg-red-50 text-red-700 hover:bg-red-100"
+                          }`}
+                        >
+                          <span>{isToggling ? "Updating…" : isAvailable ? "Available — click to hide" : "Unavailable — click to show"}</span>
+                          {/* Toggle pill */}
+                          <span className={`relative inline-flex h-5 w-9 shrink-0 rounded-full transition-colors ${isAvailable ? "bg-green-500" : "bg-red-400"}`}>
+                            <span className={`inline-block h-4 w-4 rounded-full bg-white shadow transform transition-transform mt-0.5 ${isAvailable ? "translate-x-4" : "translate-x-0.5"}`} />
+                          </span>
                         </button>
-                        <button onClick={() => setDeleteId(car._id)}
-                          className="flex-1 text-sm text-red-600 border border-red-200 hover:bg-red-50 rounded-xl py-1.5 transition font-medium">
-                          Delete
-                        </button>
+
+                        <div className="mt-2 flex gap-2">
+                          <button onClick={() => openEdit(car)}
+                            className="flex-1 text-sm text-navy-900 border border-navy-200 hover:bg-navy-50 rounded-xl py-1.5 transition font-medium">
+                            Edit
+                          </button>
+                          <button onClick={() => setDeleteId(car._id)}
+                            className="flex-1 text-sm text-red-600 border border-red-200 hover:bg-red-50 rounded-xl py-1.5 transition font-medium">
+                            Delete
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>
