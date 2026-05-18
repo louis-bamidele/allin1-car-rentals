@@ -32,11 +32,11 @@ export default function DestinationBanner() {
         <div className="container-x grid lg:grid-cols-[1fr_auto] items-end gap-8">
           {/* Text */}
           <Reveal variants={fadeUp} className="max-w-xl ">
-            <h2 className="mt-2 text-navy/75 text-6xl lg:text-5xl font-display font-bold leading-tight">
+            <h2 className="mt-2 text-navy/75 text-4xl lg:text-5xl font-display font-bold leading-tight">
               One island,{" "}
               <span className="text-gold-400">every road waiting.</span>
             </h2>
-            <p className="mt-3 text-navy/75 text-sm sm:text-base max-w-lg pr-10 lg:pr-20">
+            <p className="mt-3 text-white text-sm sm:text-base max-w-lg backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl px-4 py-3">
               From the colorful streets of Willemstad to the wild west coast,
               the whole island is yours to discover. Whether you're here for a
               week or a month, explore it all at your own pace with a clean,
@@ -44,37 +44,11 @@ export default function DestinationBanner() {
             </p>
             <Link
               to="/cars"
-              className="mt-6 inline-flex items-center shadow-lg gap-2.5 px-6 py-3 rounded-full border-2 border-navy text-navy font-semibold text-sm hover:bg-navy transition duration-300"
+              className="mt-6 inline-flex bg-gold-400/75 items-center shadow-lg gap-2.5 px-6 py-3 rounded-full border-2 border-navy text-navy font-semibold text-sm hover:bg-navy transition duration-300"
             >
               Book now <ArrowIcon className="w-4 h-4" />
             </Link>
           </Reveal>
-
-          {/* Portrait photo — inset card, desktop only */}
-          <motion.div
-            initial={{ opacity: 0, y: 28 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.35, duration: 0.7, ease }}
-            className="hidden lg:block self-end"
-          >
-            <div className="portrait-card relative w-44 xl:w-52 aspect-[3/4] rounded-2xl overflow-hidden shadow-lg border border-white/80">
-              <img
-                src="/images/curacao-portrait.jpg"
-                alt="Punda district, Willemstad"
-                className="w-full h-full object-cover object-center"
-                fetchPriority="low"
-                decoding="async"
-                onError={(e) => {
-                  e.currentTarget.closest(".portrait-card").style.display =
-                    "none";
-                }}
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-navy-950/30 to-transparent" />
-              <span className="absolute top-3 left-0 right-0 text-center text-blue/80 text-xs font-semibold tracking-wide">
-                Willemstad, Curaçao
-              </span>
-            </div>
-          </motion.div>
         </div>
       </div>
     </section>
