@@ -2,14 +2,14 @@ import { useState, useEffect, useRef } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import Logo from "./Logo";
 import { MenuIcon, CloseIcon, PhoneIcon } from "./Icons";
+import LangSwitcher from "./LangSwitcher";
+import { useLang } from "../contexts/LanguageContext";
 
-const links = [
-  { to: "/", label: "Home", end: true },
-  { to: "/cars", label: "Our Cars" },
-  { to: "/#how", label: "How it works", hash: "how" },
-  { to: "/#services", label: "Services", hash: "services" },
-  { to: "/#about", label: "About", hash: "about" },
-  { to: "/#contact", label: "Contact", hash: "contact" },
+const HASH_LINKS = [
+  { to: "/#how", hash: "how", labelKey: "howItWorks" },
+  { to: "/#services", hash: "services", labelKey: "services" },
+  { to: "/#about", hash: "about", labelKey: "about" },
+  { to: "/#contact", hash: "contact", labelKey: "contact" },
 ];
 
 // Must be in DOM order (matches Home.jsx render sequence)
@@ -22,9 +22,20 @@ export default function Navbar() {
   const [activeSection, setActiveSection] = useState("");
   const location = useLocation();
   const headerRef = useRef(null);
+  const { t } = useLang();
 
   const isHome = location.pathname === "/";
   const transparent = isHome && overBanner && !open;
+
+  // Build the full links list inline so labels are always reactive to lang
+  const links = [
+    { to: "/", label: t.nav.home, end: true },
+    { to: "/cars", label: t.nav.ourCars },
+    { to: "/#how", label: t.nav.howItWorks, hash: "how" },
+    { to: "/#services", label: t.nav.services, hash: "services" },
+    { to: "/#about", label: t.nav.about, hash: "about" },
+    { to: "/#contact", label: t.nav.contact, hash: "contact" },
+  ];
 
   useEffect(() => {
     const onScroll = () => {
@@ -127,7 +138,7 @@ export default function Navbar() {
             </a>
             <span className="hidden md:inline text-white/60">|</span>
             <span className="hidden md:inline">
-              Open daily 8:00 AM to 5:00 PM
+              {t.infoBar.openHours}
             </span>
           </div>
           <a
@@ -136,7 +147,7 @@ export default function Navbar() {
             rel="noreferrer"
             className="shrink-0 text-gold-400 hover:text-gold-300"
           >
-            WhatsApp us
+            {t.infoBar.whatsapp}
           </a>
         </div>
       </div>
@@ -176,11 +187,12 @@ export default function Navbar() {
         </ul>
 
         <div className="flex items-center gap-2 sm:gap-3">
+          <LangSwitcher />
           <Link
             to="/cars"
             className="hidden sm:inline-flex rounded-full btn-primary py-2 sm:py-2.5 px-4 sm:px-5 text-xs sm:text-sm"
           >
-            Book now
+            {t.nav.bookNow}
           </Link>
           <button
             className={`lg:hidden p-2 -mr-2 rounded-lg transition duration-300 ${
@@ -237,7 +249,7 @@ export default function Navbar() {
             )}
             <li className="pt-2">
               <Link to="/cars" className="btn-primary w-full">
-                Book now
+                {t.nav.bookNow}
               </Link>
             </li>
           </ul>

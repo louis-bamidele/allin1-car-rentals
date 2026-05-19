@@ -1,40 +1,21 @@
 import { motion } from "framer-motion";
 import { StarIcon } from "./Icons";
 import Reveal, { fadeUp, stagger } from "./motion/Reveal";
-
-const reviews = [
-  {
-    name: "Marta R.",
-    trip: "Visiting from the Netherlands",
-    quote:
-      "Super friendly team. The Kia Soul was perfect for our family and we got it delivered right at the airport. Booking was simple over WhatsApp.",
-  },
-  {
-    name: "James K.",
-    trip: "Business traveler",
-    quote:
-      "I rented for three weeks while working on the island. The price was fair, the car was clean, and they answered every message quickly.",
-  },
-  {
-    name: "Sophie L.",
-    trip: "Honeymoon trip",
-    quote:
-      "We had a small issue with a tire and they came out within the hour. That kind of service makes a real difference on vacation.",
-  },
-];
+import { useLang } from "../contexts/LanguageContext";
 
 export default function Testimonials() {
+  const { t } = useLang();
   return (
     <section className="section">
       <div className="container-x">
         <Reveal className="max-w-2xl" variants={fadeUp}>
-          <span className="eyebrow">Customer stories</span>
+          <span className="eyebrow">{t.testimonials.eyebrow}</span>
           <h2 className="mt-3 text-2xl sm:text-3xl md:text-4xl font-bold">
-            People love driving with us.
+            {t.testimonials.heading}
           </h2>
         </Reveal>
         <Reveal variants={stagger} className="mt-8 md:mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
-          {reviews.map((r) => (
+          {t.testimonials.reviews.map((r) => (
             <motion.figure
               key={r.name}
               variants={fadeUp}

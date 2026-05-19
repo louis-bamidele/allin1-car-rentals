@@ -1,15 +1,11 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-
-const messages = [
-  "Requesting all cars data",
-  "Checking live availability",
-  "Loading photos and specs",
-  "Almost ready, getting the keys",
-];
+import { useLang } from "../contexts/LanguageContext";
 
 export default function CarsLoader({ messageIndex = 0 }) {
   const [dots, setDots] = useState("");
+  const { t } = useLang();
+  const messages = t.carsLoader.messages;
 
   useEffect(() => {
     const id = setInterval(() => {
@@ -72,8 +68,7 @@ export default function CarsLoader({ messageIndex = 0 }) {
         </div>
 
         <p className="mt-6 text-xs text-white/50 max-w-xs">
-          We are pulling the full fleet and the latest photos for you. This only
-          takes a moment.
+          {t.carsLoader.footerNote}
         </p>
       </div>
     </motion.div>

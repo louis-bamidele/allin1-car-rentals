@@ -4,19 +4,23 @@ import { motion } from "framer-motion";
 import { getCars } from "../lib/api";
 import { SeatIcon, GearIcon, FuelIcon, ArrowIcon } from "./Icons";
 import Reveal, { fadeUp, stagger } from "./motion/Reveal";
+import { useLang } from "../contexts/LanguageContext";
 
-const CATEGORIES = ["All", "Economy", "Comfort", "SUV"];
+// DB categories stay in English — used as filter keys
+const DB_CATEGORIES = ["All", "Economy", "Comfort", "SUV"];
 
 export default function Fleet() {
-  const [active, setActive] = useState("All");
+  const [activeIndex, setActiveIndex] = useState(0);
   const [fleet, setFleet] = useState([]);
   const [fetching, setFetching] = useState(true);
+  const { t } = useLang();
 
   useEffect(() => {
     getCars().then(setFleet).catch(() => setFleet([])).finally(() => setFetching(false));
   }, []);
 
-  const cars = active === "All" ? fleet : fleet.filter((c) => c.category === active);
+  const activeDb = DB_CATEGORIES[activeIndex];
+  const cars = activeDb === "All" ? fleet : fleet.filter((c) => c.category === activeDb);
   const visible = cars.slice(0, 6);
 
   return (
@@ -24,29 +28,27 @@ export default function Fleet() {
       <div className="container-x">
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
           <Reveal className="max-w-xl" variants={fadeUp}>
-            <span className="eyebrow">Our fleet</span>
+            <span className="eyebrow">{t.fleet.eyebrow}</span>
             <h2 className="mt-3 text-2xl sm:text-3xl md:text-4xl font-bold">
-              Pick the car that fits your trip.
+              {t.fleet.heading}
             </h2>
             <p className="mt-3 text-slate-600">
-              Compact runners for the city, comfortable sedans for longer
-              drives, and roomy SUVs for the family. All cars are inspected and
-              cleaned before every rental.
+              {t.fleet.body}
             </p>
           </Reveal>
           <div className="flex flex-wrap gap-2">
-            {CATEGORIES.map((c) => (
+            {t.fleet.categories.map((label, i) => (
               <motion.button
-                key={c}
-                onClick={() => setActive(c)}
+                key={DB_CATEGORIES[i]}
+                onClick={() => setActiveIndex(i)}
                 whileTap={{ scale: 0.96 }}
                 className={`px-4 py-2 rounded-full text-sm font-semibold transition ${
-                  active === c
+                  activeIndex === i
                     ? "bg-navy-900 text-white"
                     : "bg-cream-50 text-navy-900 hover:bg-cream-100"
                 }`}
               >
-                {c}
+                {label}
               </motion.button>
             ))}
           </div>
@@ -61,7 +63,7 @@ export default function Fleet() {
         {!fetching && (
           <Reveal
             variants={stagger}
-            key={active}
+            key={activeIndex}
             className="mt-8 md:mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6"
           >
             {visible.map((car, index) => (
@@ -93,7 +95,7 @@ export default function Fleet() {
                     <div className="text-right">
                       <div className="text-2xl font-display font-bold text-navy-900">
                         ${car.dailyRate}
-                        <span className="text-sm font-normal text-slate-500"> / day</span>
+                        <span className="text-sm font-normal text-slate-500"> {t.fleet.perDay}</span>
                       </div>
                     </div>
                   </div>
@@ -105,7 +107,7 @@ export default function Fleet() {
                   <p className="mt-2 text-sm text-slate-600">{car.description}</p>
                   <ul className="mt-4 grid grid-cols-3 gap-2 text-xs text-slate-600 border-t border-navy-100 pt-4">
                     <li className="flex items-center gap-1.5">
-                      <SeatIcon className="w-4 h-4 text-navy-700" /> {car.seats} seats
+                      <SeatIcon className="w-4 h-4 text-navy-700" /> {car.seats} {t.fleet.seats}
                     </li>
                     <li className="flex items-center gap-1.5">
                       <GearIcon className="w-4 h-4 text-navy-700" /> {car.transmission}
@@ -115,7 +117,7 @@ export default function Fleet() {
                     </li>
                   </ul>
                   <Link to={`/car/${car.slug}`} className="btn-secondary mt-5">
-                    More about this car <ArrowIcon className="w-4 h-4" />
+                    {t.fleet.moreAbout} <ArrowIcon className="w-4 h-4" />
                   </Link>
                 </div>
               </motion.article>
@@ -125,7 +127,7 @@ export default function Fleet() {
 
         <div className="mt-10 flex justify-center">
           <Link to="/cars" className="btn-ghost">
-            See all our cars <ArrowIcon className="w-4 h-4" />
+            {t.fleet.seeAll} <ArrowIcon className="w-4 h-4" />
           </Link>
         </div>
       </div>

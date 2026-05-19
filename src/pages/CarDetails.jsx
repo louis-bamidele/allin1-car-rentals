@@ -14,6 +14,7 @@ import {
   ClockIcon,
 } from "../components/Icons";
 import Reveal, { fadeUp, stagger } from "../components/motion/Reveal";
+import { useLang } from "../contexts/LanguageContext";
 
 const page = {
   initial: { opacity: 0, y: 16 },
@@ -28,6 +29,7 @@ export default function CarDetails() {
   const [related, setRelated] = useState([]);
   const [activeImg, setActiveImg] = useState(0);
   const [fetching, setFetching] = useState(true);
+  const { t } = useLang();
 
   useEffect(() => {
     setFetching(true);
@@ -63,7 +65,9 @@ export default function CarDetails() {
   if (!car) return null;
 
   const reserveText = encodeURIComponent(
-    `Hi All in 1, I would like to reserve the ${car.name} at $${car.dailyRate}/day. Please share availability.`
+    t.carDetails.whatsappMsg
+      .replace("{name}", car.name)
+      .replace("{rate}", car.dailyRate)
   );
   const reserveLink = `https://wa.me/59995178686?text=${reserveText}`;
 
@@ -72,9 +76,9 @@ export default function CarDetails() {
       <section className="pt-24 sm:pt-28 lg:pt-32 pb-8 bg-navy-900 text-white">
         <div className="container-x">
           <nav className="text-xs sm:text-sm text-white/70">
-            <Link to="/" className="hover:text-gold-400">Home</Link>
+            <Link to="/" className="hover:text-gold-400">{t.carDetails.breadcrumbHome}</Link>
             <span className="px-2">/</span>
-            <Link to="/cars" className="hover:text-gold-400">Our Cars</Link>
+            <Link to="/cars" className="hover:text-gold-400">{t.carDetails.breadcrumbCars}</Link>
             <span className="px-2">/</span>
             <span className="text-white">{car.name}</span>
           </nav>
@@ -136,15 +140,15 @@ export default function CarDetails() {
               <div className="text-3xl sm:text-4xl font-display font-bold text-navy-900">
                 ${car.dailyRate}
               </div>
-              <div className="text-slate-500 text-sm">/ day</div>
+              <div className="text-slate-500 text-sm">{t.carDetails.perDay}</div>
             </div>
             <div className="mt-1 text-xs text-slate-500">
-              Weekly ${car.weeklyRate} &middot; Monthly ${car.monthlyRate}
+              {t.carDetails.weekly} ${car.weeklyRate} &middot; {t.carDetails.monthly} ${car.monthlyRate}
             </div>
 
             <ul className="mt-5 grid grid-cols-3 gap-2 text-xs text-slate-600 border-y border-navy-100 py-4">
               <li className="flex items-center gap-1.5">
-                <SeatIcon className="w-4 h-4 text-navy-700" /> {car.seats} seats
+                <SeatIcon className="w-4 h-4 text-navy-700" /> {car.seats} {t.carDetails.seats}
               </li>
               <li className="flex items-center gap-1.5">
                 <GearIcon className="w-4 h-4 text-navy-700" /> {car.transmission}
@@ -160,7 +164,7 @@ export default function CarDetails() {
               rel="noreferrer"
               className="btn-primary w-full mt-5"
             >
-              Reserve this car <ArrowIcon className="w-4 h-4" />
+              {t.carDetails.reserveCar} <ArrowIcon className="w-4 h-4" />
             </a>
             <a
               href={reserveLink}
@@ -168,21 +172,21 @@ export default function CarDetails() {
               rel="noreferrer"
               className="mt-3 inline-flex w-full items-center justify-center gap-2 px-5 py-3 rounded-xl bg-[#25D366] text-white font-semibold hover:opacity-90 transition"
             >
-              <WhatsAppIcon className="w-5 h-5" /> Ask on WhatsApp
+              <WhatsAppIcon className="w-5 h-5" /> {t.carDetails.askWhatsapp}
             </a>
 
             <ul className="mt-5 space-y-2 text-sm text-slate-600">
               <li className="flex items-start gap-2">
                 <ShieldIcon className="w-4 h-4 mt-0.5 text-gold-600 shrink-0" />
-                Standard insurance is included.
+                {t.carDetails.insuranceNote}
               </li>
               <li className="flex items-start gap-2">
                 <PlaneIcon className="w-4 h-4 mt-0.5 text-gold-600 shrink-0" />
-                Free delivery at Hato Airport.
+                {t.carDetails.deliveryNote}
               </li>
               <li className="flex items-start gap-2">
                 <ClockIcon className="w-4 h-4 mt-0.5 text-gold-600 shrink-0" />
-                Free cancellation up to 24 hours before pickup.
+                {t.carDetails.cancellationNote}
               </li>
             </ul>
           </motion.aside>
@@ -192,16 +196,16 @@ export default function CarDetails() {
       <section className="section">
         <div className="container-x grid lg:grid-cols-12 gap-10">
           <Reveal className="lg:col-span-7" variants={fadeUp}>
-            <span className="eyebrow">About this car</span>
+            <span className="eyebrow">{t.carDetails.aboutCar}</span>
             <h2 className="mt-3 text-2xl sm:text-3xl md:text-4xl font-bold">
-              Built for an easy island drive.
+              {t.carDetails.aboutHeading}
             </h2>
             <p className="mt-4 text-slate-600 leading-relaxed">
               {car.longDescription}
             </p>
 
             <h3 className="mt-8 font-display font-semibold text-lg text-navy-900">
-              Features and comfort
+              {t.carDetails.featuresHeading}
             </h3>
             <Reveal
               variants={stagger}
@@ -224,22 +228,22 @@ export default function CarDetails() {
 
           <Reveal className="lg:col-span-5" variants={fadeUp}>
             <div className="card">
-              <h3 className="font-display font-semibold text-lg">Specs</h3>
+              <h3 className="font-display font-semibold text-lg">{t.carDetails.specsHeading}</h3>
               <dl className="mt-4 divide-y divide-navy-100 text-sm">
-                <Row label="Category" value={car.category} />
-                <Row label="Year" value={car.year} />
-                <Row label="Color" value={car.color} />
-                <Row label="Seats" value={car.seats} />
-                <Row label="Doors" value={car.doors} />
-                <Row label="Transmission" value={car.transmission} />
-                <Row label="Fuel" value={car.fuel} />
-                <Row label="Consumption" value={car.consumption} />
-                <Row label="Luggage" value={`${car.bags} bags`} />
+                <Row label={t.carDetails.specsLabels.category} value={car.category} />
+                <Row label={t.carDetails.specsLabels.year} value={car.year} />
+                <Row label={t.carDetails.specsLabels.color} value={car.color} />
+                <Row label={t.carDetails.specsLabels.seats} value={car.seats} />
+                <Row label={t.carDetails.specsLabels.doors} value={car.doors} />
+                <Row label={t.carDetails.specsLabels.transmission} value={car.transmission} />
+                <Row label={t.carDetails.specsLabels.fuel} value={car.fuel} />
+                <Row label={t.carDetails.specsLabels.consumption} value={car.consumption} />
+                <Row label={t.carDetails.specsLabels.luggage} value={`${car.bags} ${t.carDetails.specsLabels.luggage}`} />
               </dl>
             </div>
 
             <div className="card mt-6">
-              <h3 className="font-display font-semibold text-lg">Why this car</h3>
+              <h3 className="font-display font-semibold text-lg">{t.carDetails.whyHeading}</h3>
               <ul className="mt-4 space-y-3 text-sm text-slate-700">
                 {car.highlights.map((h) => (
                   <li key={h} className="flex items-start gap-2">
@@ -260,13 +264,13 @@ export default function CarDetails() {
           <div className="container-x">
             <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
               <div>
-                <span className="eyebrow">You may also like</span>
+                <span className="eyebrow">{t.carDetails.alsoLike}</span>
                 <h2 className="mt-2 text-2xl sm:text-3xl font-bold">
-                  More {car.category.toLowerCase()} options.
+                  {t.carDetails.moreOptions}
                 </h2>
               </div>
               <Link to="/cars" className="btn-ghost">
-                See all cars <ArrowIcon className="w-4 h-4" />
+                {t.carDetails.seeAll} <ArrowIcon className="w-4 h-4" />
               </Link>
             </div>
             <Reveal
@@ -294,7 +298,7 @@ export default function CarDetails() {
                       </div>
                       <div className="mt-1 font-semibold text-navy-900">{c.name}</div>
                       <div className="mt-1 text-sm text-slate-500">
-                        ${c.dailyRate} / day
+                        ${c.dailyRate} {t.carDetails.perDay}
                       </div>
                     </div>
                   </Link>

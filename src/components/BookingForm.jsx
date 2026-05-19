@@ -1,15 +1,11 @@
 import { useState } from "react";
 import { MapPinIcon, ArrowIcon } from "./Icons";
-
-const locations = [
-  "Hato International Airport",
-  "Willemstad Downtown",
-  "Jan Thiel",
-  "Mambo Beach",
-  "Hotel delivery",
-];
+import { useLang } from "../contexts/LanguageContext";
 
 export default function BookingForm({ compact = false }) {
+  const { t } = useLang();
+  const locations = t.booking.locations;
+
   const [form, setForm] = useState({
     pickup: locations[0],
     pickupDate: "",
@@ -17,10 +13,17 @@ export default function BookingForm({ compact = false }) {
     vehicle: "Any",
   });
 
+  // Keep pickup in sync if language changes and current value isn't in the new list
+  const pickupValue = locations.includes(form.pickup) ? form.pickup : locations[0];
+
   function handleSubmit(e) {
     e.preventDefault();
     const message = encodeURIComponent(
-      `Hi All in 1 Car Rentals, I would like to book a car.\nPickup: ${form.pickup}\nPickup date: ${form.pickupDate}\nReturn date: ${form.returnDate}\nVehicle class: ${form.vehicle}`
+      t.booking.whatsappMsg
+        .replace("{pickup}", pickupValue)
+        .replace("{pickupDate}", form.pickupDate)
+        .replace("{returnDate}", form.returnDate)
+        .replace("{vehicle}", form.vehicle)
     );
     window.open(`https://wa.me/59995178686?text=${message}`, "_blank");
   }
@@ -34,12 +37,12 @@ export default function BookingForm({ compact = false }) {
     >
       <div className={compact ? "" : "sm:col-span-2"}>
         <label className="text-xs font-semibold text-navy-900/80 uppercase tracking-wide">
-          Pickup location
+          {t.booking.pickupLocation}
         </label>
         <div className="mt-1 flex items-center gap-2 rounded-xl border border-navy-100 px-3 py-2.5 focus-within:border-gold-500">
           <MapPinIcon className="w-4 h-4 text-navy-700" />
           <select
-            value={form.pickup}
+            value={pickupValue}
             onChange={(e) => setForm({ ...form, pickup: e.target.value })}
             className="w-full bg-transparent outline-none text-navy-900 text-sm"
           >
@@ -52,7 +55,7 @@ export default function BookingForm({ compact = false }) {
 
       <div>
         <label className="text-xs font-semibold text-navy-900/80 uppercase tracking-wide">
-          Pickup date
+          {t.booking.pickupDate}
         </label>
         <input
           type="date"
@@ -65,7 +68,7 @@ export default function BookingForm({ compact = false }) {
 
       <div>
         <label className="text-xs font-semibold text-navy-900/80 uppercase tracking-wide">
-          Return date
+          {t.booking.returnDate}
         </label>
         <input
           type="date"
@@ -78,7 +81,7 @@ export default function BookingForm({ compact = false }) {
 
       <div className={`flex items-end ${compact ? "" : "sm:col-span-2 lg:col-span-1"}`}>
         <button type="submit" className="btn-primary w-full">
-          Check availability
+          {t.booking.checkAvailability}
           <ArrowIcon className="w-4 h-4" />
         </button>
       </div>

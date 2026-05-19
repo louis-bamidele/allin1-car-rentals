@@ -4,8 +4,10 @@ import { AnimatePresence, motion } from "framer-motion";
 import { getCars } from "../lib/api";
 import { SeatIcon, GearIcon, FuelIcon, ArrowIcon } from "../components/Icons";
 import CarsLoader from "../components/CarsLoader";
+import { useLang } from "../contexts/LanguageContext";
 
-const CATEGORIES = ["All", "Economy", "Comfort", "SUV"];
+// DB categories stay in English — used as filter keys
+const DB_CATEGORIES = ["All", "Economy", "Comfort", "SUV"];
 
 const page = {
   initial: { opacity: 0 },
@@ -26,10 +28,11 @@ function preloadImage(src) {
 }
 
 export default function OurCars() {
-  const [active, setActive] = useState("All");
+  const [activeIndex, setActiveIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [messageIndex, setMessageIndex] = useState(0);
   const [fleet, setFleet] = useState([]);
+  const { t } = useLang();
 
   useEffect(() => {
     let cancelled = false;
@@ -59,7 +62,8 @@ export default function OurCars() {
     };
   }, []);
 
-  const cars = active === "All" ? fleet : fleet.filter((c) => c.category === active);
+  const activeDb = DB_CATEGORIES[activeIndex];
+  const cars = activeDb === "All" ? fleet : fleet.filter((c) => c.category === activeDb);
 
   return (
     <AnimatePresence mode="wait">
@@ -112,14 +116,12 @@ export default function OurCars() {
             </svg>
 
             <div className="container-x relative">
-              <span className="eyebrow text-gold-400">Our Cars</span>
+              <span className="eyebrow text-gold-400">{t.ourCars.eyebrow}</span>
               <h1 className="mt-3 text-white text-3xl sm:text-4xl md:text-5xl font-display font-bold leading-tight">
-                Meet the full fleet.
+                {t.ourCars.heading}
               </h1>
               <p className="mt-4 max-w-2xl text-white/80 text-sm sm:text-base">
-                Compact runners, comfortable cruisers, and roomy SUVs. Every
-                car is inspected and cleaned before pickup. Tap a car to see
-                photos, features, and rates.
+                {t.ourCars.body}
               </p>
             </div>
           </section>
@@ -127,17 +129,17 @@ export default function OurCars() {
           <section className="section">
             <div className="container-x">
               <div className="flex flex-wrap gap-2 mb-8">
-                {CATEGORIES.map((c) => (
+                {t.ourCars.categories.map((label, i) => (
                   <button
-                    key={c}
-                    onClick={() => setActive(c)}
+                    key={DB_CATEGORIES[i]}
+                    onClick={() => setActiveIndex(i)}
                     className={`px-4 py-2 rounded-full text-sm font-semibold transition ${
-                      active === c
+                      activeIndex === i
                         ? "bg-navy-900 text-white"
                         : "bg-cream-50 text-navy-900 hover:bg-cream-100"
                     }`}
                   >
-                    {c}
+                    {label}
                   </button>
                 ))}
               </div>
@@ -165,7 +167,7 @@ export default function OurCars() {
                         </span>
                         <div className="text-2xl font-display font-bold text-navy-900">
                           ${car.dailyRate}
-                          <span className="text-sm font-normal text-slate-500"> / day</span>
+                          <span className="text-sm font-normal text-slate-500"> {t.ourCars.perDay}</span>
                         </div>
                       </div>
                       <h2 className="mt-1 text-xl font-semibold">
@@ -179,7 +181,7 @@ export default function OurCars() {
                       <p className="mt-2 text-sm text-slate-600">{car.description}</p>
                       <ul className="mt-4 grid grid-cols-3 gap-2 text-xs text-slate-600 border-t border-navy-100 pt-4">
                         <li className="flex items-center gap-1.5">
-                          <SeatIcon className="w-4 h-4 text-navy-700" /> {car.seats} seats
+                          <SeatIcon className="w-4 h-4 text-navy-700" /> {car.seats} {t.ourCars.seats}
                         </li>
                         <li className="flex items-center gap-1.5">
                           <GearIcon className="w-4 h-4 text-navy-700" /> {car.transmission}
@@ -189,7 +191,7 @@ export default function OurCars() {
                         </li>
                       </ul>
                       <Link to={`/car/${car.slug}`} className="btn-secondary mt-5">
-                        More about this car <ArrowIcon className="w-4 h-4" />
+                        {t.ourCars.moreAbout} <ArrowIcon className="w-4 h-4" />
                       </Link>
                     </div>
                   </article>

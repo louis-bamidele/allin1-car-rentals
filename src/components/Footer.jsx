@@ -1,7 +1,9 @@
 import { Link } from "react-router-dom";
 import { InstagramIcon, FacebookIcon, WhatsAppIcon } from "./Icons";
+import { useLang } from "../contexts/LanguageContext";
 
 export default function Footer() {
+  const { t } = useLang();
   return (
     <footer className="bg-navy-900 text-white">
       <div className="container-x py-12 md:py-14 grid sm:grid-cols-2 md:grid-cols-12 gap-8 md:gap-10">
@@ -13,8 +15,7 @@ export default function Footer() {
             draggable="false"
           />
           <p className="mt-4 text-sm text-white/75 max-w-sm">
-            Your key to a rental car on Curaçao. Friendly local service, clean
-            and reliable vehicles, and pricing without surprises.
+            {t.footer.tagline}
           </p>
           <div className="mt-5 flex items-center gap-3">
             <a
@@ -48,52 +49,52 @@ export default function Footer() {
         </div>
 
         <div className="md:col-span-2">
-          <h4 className="text-white font-semibold">Explore</h4>
+          <h4 className="text-white font-semibold">{t.footer.exploreHeading}</h4>
           <ul className="mt-4 space-y-2 text-sm text-white/75">
             <li>
               <Link to="/" className="hover:text-gold-400">
-                Home
+                {t.footer.links.home}
               </Link>
             </li>
             <li>
               <Link to="/cars" className="hover:text-gold-400">
-                Our Cars
+                {t.footer.links.ourCars}
               </Link>
             </li>
             <li>
               <a href="/#services" className="hover:text-gold-400">
-                Services
+                {t.footer.links.services}
               </a>
             </li>
             <li>
               <a href="/#about" className="hover:text-gold-400">
-                About
+                {t.footer.links.about}
               </a>
             </li>
             <li>
               <a href="/#contact" className="hover:text-gold-400">
-                Contact
+                {t.footer.links.contact}
               </a>
             </li>
           </ul>
         </div>
 
         <div className="md:col-span-3">
-          <h4 className="text-white font-semibold">Contact</h4>
+          <h4 className="text-white font-semibold">{t.footer.contactHeading}</h4>
           <ul className="mt-4 space-y-2 text-sm text-white/75">
             <li>+5999 517 8686</li>
             <li>Curaçao, Caribbean</li>
-            <li>Daily, 8:00 AM to 5:00 PM</li>
+            <li>{t.footer.hours}</li>
           </ul>
         </div>
 
         <div className="sm:col-span-2 md:col-span-3">
-          <h4 className="text-white font-semibold">Need a car this week?</h4>
+          <h4 className="text-white font-semibold">{t.footer.ctaHeading}</h4>
           <p className="mt-3 text-sm text-white/75">
-            Send us your dates and we will confirm availability the same day.
+            {t.footer.ctaBody}
           </p>
           <Link to="/cars" className="btn-primary mt-4">
-            Book now
+            {t.footer.bookNow}
           </Link>
         </div>
       </div>
@@ -101,15 +102,14 @@ export default function Footer() {
       <div className="border-t border-white/10">
         <div className="container-x py-5 flex flex-col md:flex-row gap-3 items-center justify-between text-xs text-white/60">
           <div>
-            © {new Date().getFullYear()} All in 1 Car Rentals. All rights
-            reserved.
+            © {new Date().getFullYear()} All in 1 Car Rentals. {t.footer.copyright}
           </div>
           <div className="flex items-center gap-4">
             <Link to="/terms" className="hover:text-gold-400">
-              Terms and Conditions
+              {t.footer.terms}
             </Link>
             <Link to="/terms#privacy" className="hover:text-gold-400">
-              Privacy Policy
+              {t.footer.privacy}
             </Link>
           </div>
         </div>

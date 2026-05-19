@@ -1,15 +1,10 @@
 import { Link } from "react-router-dom";
 import { CheckIcon } from "./Icons";
 import Reveal, { fadeUp } from "./motion/Reveal";
-
-const points = [
-  "Locally owned and operated on Curaçao",
-  "Fleet of well kept Kia, Hyundai, and Toyota models",
-  "Free airport delivery and hotel drop off",
-  "Flexible daily, weekly, and monthly rates",
-];
+import { useLang } from "../contexts/LanguageContext";
 
 export default function About() {
+  const { t } = useLang();
   return (
     <section id="about" className="section bg-cream-50">
       <div className="container-x grid lg:grid-cols-12 gap-8 md:gap-10 items-center">
@@ -25,25 +20,21 @@ export default function About() {
                 10+
               </div>
               <p className="text-sm text-white/80 mt-1">
-                Years helping travelers find the right car on the island.
+                {t.about.yearsLabel}
               </p>
             </div>
           </div>
         </Reveal>
         <Reveal className="lg:col-span-6" variants={fadeUp}>
-          <span className="eyebrow">About All in 1</span>
+          <span className="eyebrow">{t.about.eyebrow}</span>
           <h2 className="mt-3 text-2xl sm:text-3xl md:text-4xl font-bold">
-            A small team that cares about your trip.
+            {t.about.heading}
           </h2>
           <p className="mt-4 text-slate-600 leading-relaxed">
-            All in 1 Car Rentals started with a simple idea. Travelers should
-            get a clean, reliable car and friendly local support without paying
-            big agency prices. We pick our fleet for comfort and fuel economy,
-            and we keep our service personal. When you book with us you talk to
-            a real person who knows the island.
+            {t.about.body}
           </p>
           <ul className="mt-6 grid sm:grid-cols-2 gap-3">
-            {points.map((p) => (
+            {t.about.points.map((p) => (
               <li
                 key={p}
                 className="flex items-start gap-2 text-sm text-navy-900/85"
@@ -57,10 +48,10 @@ export default function About() {
           </ul>
           <div className="mt-7 flex flex-wrap gap-3">
             <Link to="/cars" className="btn-primary">
-              See our cars
+              {t.about.seeCars}
             </Link>
             <a href="#contact" className="btn-ghost">
-              Get in touch
+              {t.about.getInTouch}
             </a>
           </div>
         </Reveal>
