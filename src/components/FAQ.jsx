@@ -21,7 +21,7 @@ export default function FAQ() {
         <Reveal variants={stagger} className="lg:col-span-8 space-y-3">
           {t.faq.items.map((f, i) => (
             <motion.div
-              key={f.q}
+              key={i}
               variants={fadeUp}
               className="rounded-2xl bg-white shadow-card overflow-hidden"
             >
