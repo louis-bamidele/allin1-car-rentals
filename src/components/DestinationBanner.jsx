@@ -36,8 +36,8 @@ export default function DestinationBanner() {
               One island,{" "}
               <span className="text-gold-400">every road waiting.</span>
             </h2>
-            <p className="mt-3 text-sm sm:text-base max-w-lg pr-10 lg:pr-20">
-              <span className="text-white backdrop-blur-md bg-white/10 [box-decoration-break:clone] [-webkit-box-decoration-break:clone] px-1.5 py-0.5 rounded-md leading-relaxed">
+            <p className="mt-3 text-sm sm:text-base max-w-lg pr-10 lg:pr-20 ">
+              <span className="text-navy   bg-white/55 [box-decoration-break:clone] [-webkit-box-decoration-break:clone] px-1.5 py-0.5 rounded-md leading-relaxed">
                 From the colorful streets of Willemstad to the wild west coast,
                 the whole island is yours to discover. Whether you're here for a
                 week or a month, explore it all at your own pace with a clean,
