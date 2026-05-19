@@ -178,7 +178,7 @@ export default function Navbar() {
         <div className="flex items-center gap-2 sm:gap-3">
           <Link
             to="/cars"
-            className="hidden sm:inline-flex btn-primary py-2 sm:py-2.5 px-4 sm:px-5 text-xs sm:text-sm"
+            className="hidden sm:inline-flex rounded-full btn-primary py-2 sm:py-2.5 px-4 sm:px-5 text-xs sm:text-sm"
           >
             Book now
           </Link>

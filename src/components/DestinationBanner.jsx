@@ -46,7 +46,7 @@ export default function DestinationBanner() {
             </p>
             <Link
               to="/cars"
-              className="mt-6 inline-flex bg-gold-400/75 items-center shadow-lg gap-2.5 px-6 py-3 rounded-full border-2 border-navy text-navy font-semibold text-sm hover:bg-navy transition duration-300"
+              className="mt-6 inline-flex bg-gold-400 items-center shadow-lg gap-2.5 px-6 py-3 rounded-full  text-navy font-semibold text-sm hover:bg-navy transition duration-300"
             >
               Book now <ArrowIcon className="w-4 h-4" />
             </Link>
