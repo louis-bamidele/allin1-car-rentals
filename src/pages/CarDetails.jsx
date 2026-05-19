@@ -69,6 +69,13 @@ export default function CarDetails() {
 
   const today = new Date().toISOString().split("T")[0];
 
+  function nextDay(dateStr) {
+    if (!dateStr) return today;
+    const d = new Date(dateStr);
+    d.setDate(d.getDate() + 1);
+    return d.toISOString().split("T")[0];
+  }
+
   function buildReserveLink() {
     const msg = encodeURIComponent(
       t.carDetails.whatsappMsg
@@ -206,7 +213,12 @@ export default function CarDetails() {
                           type="date"
                           value={pickupDate}
                           min={today}
-                          onChange={(e) => setPickupDate(e.target.value)}
+                          onChange={(e) => {
+                            const newPickup = e.target.value;
+                            setPickupDate(newPickup);
+                            // clear return date if it's no longer strictly after new pickup
+                            if (returnDate && returnDate <= newPickup) setReturnDate("");
+                          }}
                           className="mt-1 w-full rounded-lg border border-navy-100 px-2.5 py-2 text-navy-900 text-sm outline-none focus:border-gold-500"
                         />
                       </div>
@@ -217,7 +229,7 @@ export default function CarDetails() {
                         <input
                           type="date"
                           value={returnDate}
-                          min={pickupDate || today}
+                          min={nextDay(pickupDate)}
                           onChange={(e) => setReturnDate(e.target.value)}
                           className="mt-1 w-full rounded-lg border border-navy-100 px-2.5 py-2 text-navy-900 text-sm outline-none focus:border-gold-500"
                         />

@@ -3,6 +3,15 @@ import { MapPinIcon, ArrowIcon, CarIcon } from "./Icons";
 import { useLang } from "../contexts/LanguageContext";
 import { getCars } from "../lib/api";
 
+const today = new Date().toISOString().split("T")[0];
+
+function nextDay(dateStr) {
+  if (!dateStr) return today;
+  const d = new Date(dateStr);
+  d.setDate(d.getDate() + 1);
+  return d.toISOString().split("T")[0];
+}
+
 export default function BookingForm({ compact = false }) {
   const { t } = useLang();
   const locations = t.booking.locations;
@@ -95,20 +104,28 @@ export default function BookingForm({ compact = false }) {
           type="date"
           required
           value={form.pickupDate}
-          min={new Date().toISOString().split("T")[0]}
-          onChange={(e) => setForm({ ...form, pickupDate: e.target.value })}
+          min={today}
+          onChange={(e) => {
+            const newPickup = e.target.value;
+            setForm({
+              ...form,
+              pickupDate: newPickup,
+              // clear return date if it's no longer strictly after the new pickup
+              returnDate: form.returnDate > newPickup ? form.returnDate : "",
+            });
+          }}
           className="mt-1 w-full rounded-xl border border-navy-100 px-3 py-2.5 text-navy-900 text-sm outline-none focus:border-gold-500"
         />
       </div>
 
-      {/* Return date */}
+      {/* Return date — must be at least 1 day after pickup */}
       <div>
         <label className={labelClass}>{t.booking.returnDate}</label>
         <input
           type="date"
           required
           value={form.returnDate}
-          min={form.pickupDate || new Date().toISOString().split("T")[0]}
+          min={nextDay(form.pickupDate)}
           onChange={(e) => setForm({ ...form, returnDate: e.target.value })}
           className="mt-1 w-full rounded-xl border border-navy-100 px-3 py-2.5 text-navy-900 text-sm outline-none focus:border-gold-500"
         />
