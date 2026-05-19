@@ -24,7 +24,7 @@ export default function Services() {
             const Icon = ICONS[i];
             return (
               <motion.div
-                key={title}
+                key={i}
                 variants={fadeUp}
                 whileHover={{ y: -4 }}
                 className="card flex gap-4"

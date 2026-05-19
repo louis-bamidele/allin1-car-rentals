@@ -29,6 +29,9 @@ export default function CarDetails() {
   const [related, setRelated] = useState([]);
   const [activeImg, setActiveImg] = useState(0);
   const [fetching, setFetching] = useState(true);
+  const [showPicker, setShowPicker] = useState(false);
+  const [pickupDate, setPickupDate] = useState("");
+  const [returnDate, setReturnDate] = useState("");
   const { t } = useLang();
 
   useEffect(() => {
@@ -64,12 +67,26 @@ export default function CarDetails() {
 
   if (!car) return null;
 
-  const reserveText = encodeURIComponent(
-    t.carDetails.whatsappMsg
-      .replace("{name}", car.name)
-      .replace("{rate}", car.dailyRate)
-  );
-  const reserveLink = `https://wa.me/59995178686?text=${reserveText}`;
+  const today = new Date().toISOString().split("T")[0];
+
+  function buildReserveLink() {
+    const msg = encodeURIComponent(
+      t.carDetails.whatsappMsg
+        .replace("{name}", car.name)
+        .replace("{rate}", car.dailyRate)
+        .replace("{pickupDate}", pickupDate)
+        .replace("{returnDate}", returnDate)
+    );
+    return `https://wa.me/59995178686?text=${msg}`;
+  }
+
+  function handleConfirmReserve() {
+    window.open(buildReserveLink(), "_blank");
+  }
+
+  const askLink = `https://wa.me/59995178686?text=${encodeURIComponent(
+    `Hi All in 1, I have a question about the ${car.name}.`
+  )}`;
 
   return (
     <motion.div variants={page} initial="initial" animate="animate" exit="exit">
@@ -158,16 +175,77 @@ export default function CarDetails() {
               </li>
             </ul>
 
-            <a
-              href={reserveLink}
-              target="_blank"
-              rel="noreferrer"
+            <button
+              onClick={() => setShowPicker((v) => !v)}
               className="btn-primary w-full mt-5"
             >
               {t.carDetails.reserveCar} <ArrowIcon className="w-4 h-4" />
-            </a>
+            </button>
+
+            {/* Inline date picker */}
+            <AnimatePresence initial={false}>
+              {showPicker && (
+                <motion.div
+                  key="picker"
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.25, ease: "easeOut" }}
+                  className="overflow-hidden"
+                >
+                  <div className="mt-3 rounded-xl border border-navy-100 bg-cream-50 p-4 space-y-3">
+                    <p className="text-sm font-semibold text-navy-900">
+                      {t.carDetails.selectDates}
+                    </p>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <label className="text-xs font-semibold text-navy-900/70 uppercase tracking-wide">
+                          {t.carDetails.pickupDate}
+                        </label>
+                        <input
+                          type="date"
+                          value={pickupDate}
+                          min={today}
+                          onChange={(e) => setPickupDate(e.target.value)}
+                          className="mt-1 w-full rounded-lg border border-navy-100 px-2.5 py-2 text-navy-900 text-sm outline-none focus:border-gold-500"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-xs font-semibold text-navy-900/70 uppercase tracking-wide">
+                          {t.carDetails.returnDate}
+                        </label>
+                        <input
+                          type="date"
+                          value={returnDate}
+                          min={pickupDate || today}
+                          onChange={(e) => setReturnDate(e.target.value)}
+                          className="mt-1 w-full rounded-lg border border-navy-100 px-2.5 py-2 text-navy-900 text-sm outline-none focus:border-gold-500"
+                        />
+                      </div>
+                    </div>
+                    <div className="flex gap-2 pt-1">
+                      <button
+                        onClick={handleConfirmReserve}
+                        disabled={!pickupDate || !returnDate}
+                        className="inline-flex flex-1 items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#25D366] text-white font-semibold text-sm hover:opacity-90 transition disabled:opacity-40 disabled:cursor-not-allowed"
+                      >
+                        <WhatsAppIcon className="w-4 h-4" />
+                        {t.carDetails.confirmReserve}
+                      </button>
+                      <button
+                        onClick={() => setShowPicker(false)}
+                        className="px-4 py-2.5 rounded-xl border border-navy-200 text-navy-900 text-sm font-semibold hover:bg-navy-50 transition"
+                      >
+                        {t.carDetails.cancelDates}
+                      </button>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
             <a
-              href={reserveLink}
+              href={askLink}
               target="_blank"
               rel="noreferrer"
               className="mt-3 inline-flex w-full items-center justify-center gap-2 px-5 py-3 rounded-xl bg-[#25D366] text-white font-semibold hover:opacity-90 transition"

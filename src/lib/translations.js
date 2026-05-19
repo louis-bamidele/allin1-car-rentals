@@ -233,6 +233,8 @@ export const translations = {
     },
     booking: {
       pickupLocation: "Pickup location",
+      vehicle: "Vehicle",
+      anyVehicle: "Any vehicle",
       pickupDate: "Pickup date",
       returnDate: "Return date",
       checkAvailability: "Check availability",
@@ -244,7 +246,7 @@ export const translations = {
         "Hotel delivery",
       ],
       whatsappMsg:
-        "Hi All in 1 Car Rentals, I would like to book a car.\nPickup: {pickup}\nPickup date: {pickupDate}\nReturn date: {returnDate}\nVehicle class: {vehicle}",
+        "Hi All in 1 Car Rentals, I would like to book a car.\nPickup: {pickup}\nVehicle: {vehicle}\nPickup date: {pickupDate}\nReturn date: {returnDate}",
     },
     floatingCta: {
       ariaLabel: "Chat with us on WhatsApp",
@@ -290,8 +292,13 @@ export const translations = {
       alsoLike: "You may also like",
       moreOptions: "more options.",
       seeAll: "See all cars",
+      selectDates: "Select your dates",
+      pickupDate: "Pickup date",
+      returnDate: "Return date",
+      confirmReserve: "Confirm & WhatsApp",
+      cancelDates: "Cancel",
       whatsappMsg:
-        "Hi All in 1, I would like to reserve the {name} at ${rate}/day. Please share availability.",
+        "Hi All in 1, I would like to reserve the {name} at ${rate}/day.\nPickup date: {pickupDate}\nReturn date: {returnDate}\nPlease confirm availability.",
     },
     carsLoader: {
       messages: [
@@ -540,6 +547,8 @@ export const translations = {
     },
     booking: {
       pickupLocation: "Lugar de recogida",
+      vehicle: "Vehículo",
+      anyVehicle: "Cualquier vehículo",
       pickupDate: "Fecha de recogida",
       returnDate: "Fecha de devolución",
       checkAvailability: "Verificar disponibilidad",
@@ -551,7 +560,7 @@ export const translations = {
         "Entrega en hotel",
       ],
       whatsappMsg:
-        "Hola All in 1 Car Rentals, me gustaría reservar un auto.\nLugar de recogida: {pickup}\nFecha de recogida: {pickupDate}\nFecha de devolución: {returnDate}\nClase de vehículo: {vehicle}",
+        "Hola All in 1 Car Rentals, me gustaría reservar un auto.\nLugar de recogida: {pickup}\nVehículo: {vehicle}\nFecha de recogida: {pickupDate}\nFecha de devolución: {returnDate}",
     },
     floatingCta: {
       ariaLabel: "Chatea con nosotros por WhatsApp",
@@ -597,8 +606,13 @@ export const translations = {
       alsoLike: "También te puede gustar",
       moreOptions: "opciones más.",
       seeAll: "Ver todos los autos",
+      selectDates: "Selecciona tus fechas",
+      pickupDate: "Fecha de recogida",
+      returnDate: "Fecha de devolución",
+      confirmReserve: "Confirmar y WhatsApp",
+      cancelDates: "Cancelar",
       whatsappMsg:
-        "Hola All in 1, me gustaría reservar el {name} a ${rate}/día. Por favor comparte disponibilidad.",
+        "Hola All in 1, me gustaría reservar el {name} a ${rate}/día.\nFecha de recogida: {pickupDate}\nFecha de devolución: {returnDate}\nPor favor comparte disponibilidad.",
     },
     carsLoader: {
       messages: [
@@ -847,6 +861,8 @@ export const translations = {
     },
     booking: {
       pickupLocation: "Ophaallocatie",
+      vehicle: "Voertuig",
+      anyVehicle: "Elk voertuig",
       pickupDate: "Ophaaldatum",
       returnDate: "Retourdatum",
       checkAvailability: "Beschikbaarheid controleren",
@@ -858,7 +874,7 @@ export const translations = {
         "Hotelbezorging",
       ],
       whatsappMsg:
-        "Hallo All in 1 Car Rentals, ik wil graag een auto boeken.\nOphaallocatie: {pickup}\nOphaaldatum: {pickupDate}\nRetourdatum: {returnDate}\nVoertuigklasse: {vehicle}",
+        "Hallo All in 1 Car Rentals, ik wil graag een auto boeken.\nOphaallocatie: {pickup}\nVoertuig: {vehicle}\nOphaaldatum: {pickupDate}\nRetourdatum: {returnDate}",
     },
     floatingCta: {
       ariaLabel: "Chat met ons via WhatsApp",
@@ -904,8 +920,13 @@ export const translations = {
       alsoLike: "Misschien ook interessant",
       moreOptions: "meer opties.",
       seeAll: "Bekijk alle auto's",
+      selectDates: "Kies je data",
+      pickupDate: "Ophaaldatum",
+      returnDate: "Retourdatum",
+      confirmReserve: "Bevestigen & WhatsApp",
+      cancelDates: "Annuleren",
       whatsappMsg:
-        "Hallo All in 1, ik wil graag de {name} reserveren voor ${rate}/dag. Deel beschikbaarheid aub.",
+        "Hallo All in 1, ik wil graag de {name} reserveren voor ${rate}/dag.\nOphaaldatum: {pickupDate}\nRetourdatum: {returnDate}\nDeel beschikbaarheid aub.",
     },
     carsLoader: {
       messages: [
