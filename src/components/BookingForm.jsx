@@ -5,13 +5,6 @@ import { getCars } from "../lib/api";
 
 const today = new Date().toISOString().split("T")[0];
 
-function nextDay(dateStr) {
-  if (!dateStr) return today;
-  const d = new Date(dateStr);
-  d.setDate(d.getDate() + 1);
-  return d.toISOString().split("T")[0];
-}
-
 export default function BookingForm({ compact = false }) {
   const { t } = useLang();
   const locations = t.booking.locations;
@@ -110,8 +103,8 @@ export default function BookingForm({ compact = false }) {
             setForm({
               ...form,
               pickupDate: newPickup,
-              // clear return date if it's no longer strictly after the new pickup
-              returnDate: form.returnDate > newPickup ? form.returnDate : "",
+              // clear return date only if it falls before the new pickup
+              returnDate: form.returnDate >= newPickup ? form.returnDate : "",
             });
           }}
           className="mt-1 w-full rounded-xl border border-navy-100 px-3 py-2.5 text-navy-900 text-sm outline-none focus:border-gold-500"
@@ -125,7 +118,7 @@ export default function BookingForm({ compact = false }) {
           type="date"
           required
           value={form.returnDate}
-          min={nextDay(form.pickupDate)}
+          min={form.pickupDate || today}
           onChange={(e) => setForm({ ...form, returnDate: e.target.value })}
           className="mt-1 w-full rounded-xl border border-navy-100 px-3 py-2.5 text-navy-900 text-sm outline-none focus:border-gold-500"
         />
