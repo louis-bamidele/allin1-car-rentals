@@ -14,7 +14,7 @@ export default function LangSwitcher() {
         <button
           key={code}
           onClick={() => switchLang(code)}
-          className={`text-xl leading-none transition-all duration-200 ${
+          className={`text-4xl leading-none transition-all duration-200 ${
             lang === code
               ? "opacity-100 scale-110"
               : "opacity-40 hover:opacity-75"
