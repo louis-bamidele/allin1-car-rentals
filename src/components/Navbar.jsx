@@ -92,7 +92,7 @@ export default function Navbar() {
   function navLinkClass(isActive) {
     const base = "text-sm font-semibold transition duration-300";
     if (transparent)
-      return `${base} [text-shadow:0_1px_2px_rgba(13,11,97,0.5),0_0_3px_rgba(13,11,97,0.2)] ${isActive ? "text-gold-300" : "text-navy/90 hover:text-gold-300"}`;
+      return `${base} [text-shadow:0_1px_2px_rgba(13,11,97,0.5),0_0_3px_rgba(13,11,97,0.2)] ${isActive ? "text-gold-300" : "text-white hover:text-gold-300"}`;
     return `${base} ${isActive ? "text-gold-600" : "text-navy-900/80 hover:text-gold-600"}`;
   }
 
