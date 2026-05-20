@@ -40,17 +40,25 @@ export default async function handler(req, res) {
     const user = await verifyAuth(req, res);
     if (!user) return;
 
-    await runMiddleware(req, res, photoFields);
+    try {
+      await runMiddleware(req, res, photoFields);
+    } catch (err) {
+      return res.status(400).json({ message: `Photo upload failed: ${err.message}` });
+    }
 
     try {
       const {
-        name, category, seats, doors, transmission, fuel, consumption,
+        name, category,
+        seats, doors, transmission, fuel, consumption,
         bags, dailyRate, weeklyRate, monthlyRate, year, color,
         description, longDescription,
       } = req.body;
 
-      const features = JSON.parse(req.body.features || "[]");
-      const highlights = JSON.parse(req.body.highlights || "[]");
+      if (!name) return res.status(400).json({ message: "Car name is required" });
+      if (!dailyRate) return res.status(400).json({ message: "Daily rate is required" });
+
+      const features   = (JSON.parse(req.body.features   || "[]")).filter((f) => f.trim());
+      const highlights = (JSON.parse(req.body.highlights || "[]")).filter((h) => h.trim());
 
       const photos = ["photo1", "photo2", "photo3", "photo4"].map(
         (k) => req.files?.[k]?.[0]?.path
@@ -65,14 +73,25 @@ export default async function handler(req, res) {
         return res.status(400).json({ message: "A car with this name already exists" });
 
       const car = await Car.create({
-        slug, name, category,
-        seats: Number(seats), doors: Number(doors),
-        transmission, fuel, consumption,
-        bags: Number(bags),
-        dailyRate: Number(dailyRate), weeklyRate: Number(weeklyRate), monthlyRate: Number(monthlyRate),
-        year: Number(year), color,
-        image: photos[0], gallery: photos,
-        description, longDescription, features, highlights,
+        slug, name,
+        category: category || "Economy",
+        seats:       seats       ? Number(seats)       : undefined,
+        doors:       doors       ? Number(doors)       : undefined,
+        transmission: transmission || undefined,
+        fuel:         fuel         || undefined,
+        consumption:  consumption  || "",
+        bags:         bags         ? Number(bags)       : undefined,
+        dailyRate:    Number(dailyRate),
+        weeklyRate:   weeklyRate   ? Number(weeklyRate)  : 0,
+        monthlyRate:  monthlyRate  ? Number(monthlyRate) : 0,
+        year:         year         ? Number(year)        : undefined,
+        color:        color        || "",
+        image:        photos[0],
+        gallery:      photos,
+        description:        description        || "",
+        longDescription:    longDescription    || "",
+        features,
+        highlights,
       });
 
       return res.status(201).json(car);

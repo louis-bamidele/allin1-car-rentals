@@ -12,8 +12,10 @@ const storage = new CloudinaryStorage({
   cloudinary,
   params: {
     folder: "allin1-car-rentals",
-    allowed_formats: ["jpg", "jpeg", "png", "webp"],
-    transformation: [{ width: 1200, height: 750, crop: "fill", quality: 85 }],
+    // No allowed_formats restriction — accept any image format (HEIC, AVIF, etc.)
+    // and let Cloudinary auto-convert. The transformation below normalises output.
+    resource_type: "image",
+    transformation: [{ width: 1200, height: 750, crop: "fill", quality: 85, fetch_format: "auto" }],
   },
 });
 

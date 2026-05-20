@@ -90,11 +90,14 @@ function LoginScreen({ onLogin }) {
 }
 
 // ─── Field helper ─────────────────────────────────────────────────────────────
-function Field({ label, children }) {
+function Field({ label, required = false, children }) {
   return (
     <div>
       <label className="block text-xs font-semibold uppercase tracking-wide text-navy-900/70 mb-1">
-        {label}<span className="text-red-500 ml-0.5">*</span>
+        {label}
+        {required
+          ? <span className="text-red-500 ml-0.5">*</span>
+          : <span className="text-slate-400 ml-1 font-normal normal-case tracking-normal">(optional)</span>}
       </label>
       {children}
     </div>
@@ -147,12 +150,6 @@ function CarForm({ token, editCar, onDone }) {
     if (!isEdit && form.photos.some((p) => !p)) {
       setError("Please select all 4 photos before submitting."); return;
     }
-    if (form.features.some((f) => !f.trim())) {
-      setError("Please fill in all 8 features."); return;
-    }
-    if (form.highlights.some((h) => !h.trim())) {
-      setError("Please fill in all 3 highlights."); return;
-    }
 
     setLoading(true);
     try {
@@ -199,19 +196,23 @@ function CarForm({ token, editCar, onDone }) {
       <div>
         <h3 className="text-xs font-bold uppercase tracking-widest text-navy-900/40 mb-4">Basic Info</h3>
         <div className="grid sm:grid-cols-2 gap-4">
-          <Field label="Car Name">
+          <Field label="Car Name" required>
             <input required className={inputCls} value={form.name} onChange={(e) => set("name", e.target.value)} placeholder="e.g. Kia Picanto" />
           </Field>
-          <Field label="Category">
+          <Field label="Category" required>
             <select required className={selectCls} value={form.category} onChange={(e) => set("category", e.target.value)}>
               {CATEGORIES.map((c) => <option key={c}>{c}</option>)}
             </select>
           </Field>
           <Field label="Year">
-            <input required type="number" className={inputCls} value={form.year} onChange={(e) => set("year", e.target.value)} min="2000" max="2030" />
+            <select className={selectCls} value={form.year} onChange={(e) => set("year", e.target.value)}>
+              {Array.from({ length: new Date().getFullYear() - 1999 }, (_, i) => new Date().getFullYear() - i).map((y) => (
+                <option key={y} value={y}>{y}</option>
+              ))}
+            </select>
           </Field>
           <Field label="Color">
-            <input required className={inputCls} value={form.color} onChange={(e) => set("color", e.target.value)} placeholder="e.g. White" />
+            <input className={inputCls} value={form.color} onChange={(e) => set("color", e.target.value)} placeholder="e.g. White" />
           </Field>
         </div>
       </div>
@@ -221,26 +222,26 @@ function CarForm({ token, editCar, onDone }) {
         <h3 className="text-xs font-bold uppercase tracking-widest text-navy-900/40 mb-4">Specs</h3>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <Field label="Seats">
-            <input required type="number" className={inputCls} value={form.seats} onChange={(e) => set("seats", e.target.value)} min="2" max="9" />
+            <input type="number" className={inputCls} value={form.seats} onChange={(e) => set("seats", e.target.value)} min="2" max="9" />
           </Field>
           <Field label="Doors">
-            <input required type="number" className={inputCls} value={form.doors} onChange={(e) => set("doors", e.target.value)} min="2" max="5" />
+            <input type="number" className={inputCls} value={form.doors} onChange={(e) => set("doors", e.target.value)} min="2" max="5" />
           </Field>
           <Field label="Luggage Bags">
-            <input required type="number" className={inputCls} value={form.bags} onChange={(e) => set("bags", e.target.value)} min="1" max="10" />
+            <input type="number" className={inputCls} value={form.bags} onChange={(e) => set("bags", e.target.value)} min="1" max="10" />
           </Field>
           <Field label="Transmission">
-            <select required className={selectCls} value={form.transmission} onChange={(e) => set("transmission", e.target.value)}>
+            <select className={selectCls} value={form.transmission} onChange={(e) => set("transmission", e.target.value)}>
               {TRANSMISSIONS.map((t) => <option key={t}>{t}</option>)}
             </select>
           </Field>
           <Field label="Fuel Type">
-            <select required className={selectCls} value={form.fuel} onChange={(e) => set("fuel", e.target.value)}>
+            <select className={selectCls} value={form.fuel} onChange={(e) => set("fuel", e.target.value)}>
               {FUELS.map((f) => <option key={f}>{f}</option>)}
             </select>
           </Field>
           <Field label="Consumption (L/100km)">
-            <input required className={inputCls} value={form.consumption} onChange={(e) => set("consumption", e.target.value)} placeholder="e.g. 5.0 L / 100 km" />
+            <input className={inputCls} value={form.consumption} onChange={(e) => set("consumption", e.target.value)} placeholder="e.g. 5.0 L / 100 km" />
           </Field>
         </div>
       </div>
@@ -249,14 +250,14 @@ function CarForm({ token, editCar, onDone }) {
       <div>
         <h3 className="text-xs font-bold uppercase tracking-widest text-navy-900/40 mb-4">Pricing (USD)</h3>
         <div className="grid sm:grid-cols-3 gap-4">
-          <Field label="Daily Rate $">
+          <Field label="Daily Rate $" required>
             <input required type="number" className={inputCls} value={form.dailyRate} onChange={(e) => set("dailyRate", e.target.value)} min="1" placeholder="35" />
           </Field>
           <Field label="Weekly Rate $">
-            <input required type="number" className={inputCls} value={form.weeklyRate} onChange={(e) => set("weeklyRate", e.target.value)} min="1" placeholder="210" />
+            <input type="number" className={inputCls} value={form.weeklyRate} onChange={(e) => set("weeklyRate", e.target.value)} min="0" placeholder="210" />
           </Field>
           <Field label="Monthly Rate $">
-            <input required type="number" className={inputCls} value={form.monthlyRate} onChange={(e) => set("monthlyRate", e.target.value)} min="1" placeholder="780" />
+            <input type="number" className={inputCls} value={form.monthlyRate} onChange={(e) => set("monthlyRate", e.target.value)} min="0" placeholder="780" />
           </Field>
         </div>
       </div>
@@ -266,21 +267,22 @@ function CarForm({ token, editCar, onDone }) {
         <h3 className="text-xs font-bold uppercase tracking-widest text-navy-900/40 mb-4">Descriptions</h3>
         <div className="space-y-4">
           <Field label="Short Description (1-2 sentences)">
-            <input required className={inputCls} value={form.description} onChange={(e) => set("description", e.target.value)} placeholder="Compact and fuel friendly…" />
+            <input className={inputCls} value={form.description} onChange={(e) => set("description", e.target.value)} placeholder="Compact and fuel friendly…" />
           </Field>
           <Field label="Full Description (2-3 sentences)">
-            <textarea required rows={4} className={inputCls} value={form.longDescription} onChange={(e) => set("longDescription", e.target.value)} placeholder="Describe the driving experience, who it suits, standout features…" />
+            <textarea rows={4} className={inputCls} value={form.longDescription} onChange={(e) => set("longDescription", e.target.value)} placeholder="Describe the driving experience, who it suits, standout features…" />
           </Field>
         </div>
       </div>
 
       {/* Features */}
       <div>
-        <h3 className="text-xs font-bold uppercase tracking-widest text-navy-900/40 mb-4">Features (8 required)</h3>
+        <h3 className="text-xs font-bold uppercase tracking-widest text-navy-900/40 mb-1">Features</h3>
+        <p className="text-xs text-slate-400 mb-4">Fill in as many as apply — empty fields are ignored.</p>
         <div className="grid sm:grid-cols-2 gap-3">
           {form.features.map((f, i) => (
             <Field key={i} label={`Feature ${i + 1}`}>
-              <input required className={inputCls} value={f} onChange={(e) => setFeature(i, e.target.value)}
+              <input className={inputCls} value={f} onChange={(e) => setFeature(i, e.target.value)}
                 placeholder={["Air conditioning","Bluetooth audio","USB charging","Reverse camera","ABS brakes","Cruise control","Power windows","Front airbags"][i]} />
             </Field>
           ))}
@@ -289,11 +291,12 @@ function CarForm({ token, editCar, onDone }) {
 
       {/* Highlights */}
       <div>
-        <h3 className="text-xs font-bold uppercase tracking-widest text-navy-900/40 mb-4">Highlights (3 selling points)</h3>
+        <h3 className="text-xs font-bold uppercase tracking-widest text-navy-900/40 mb-1">Highlights</h3>
+        <p className="text-xs text-slate-400 mb-4">Short selling points shown on the car detail page — fill what you have.</p>
         <div className="grid sm:grid-cols-3 gap-4">
           {form.highlights.map((h, i) => (
             <Field key={i} label={`Highlight ${i + 1}`}>
-              <input required className={inputCls} value={h} onChange={(e) => setHighlight(i, e.target.value)}
+              <input className={inputCls} value={h} onChange={(e) => setHighlight(i, e.target.value)}
                 placeholder={["Great fuel economy","Easy to park","Best value"][i]} />
             </Field>
           ))}
