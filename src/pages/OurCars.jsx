@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { getCars } from "../lib/api";
+import { imgUrl } from "../lib/cloudinary";
 import { SeatIcon, GearIcon, FuelIcon, ArrowIcon } from "../components/Icons";
 import CarsLoader from "../components/CarsLoader";
 import { useLang } from "../contexts/LanguageContext";
@@ -153,9 +154,10 @@ export default function OurCars() {
                     <Link to={`/car/${car.slug}`} className="block group">
                       <div className="aspect-[16/10] overflow-hidden bg-gradient-to-br from-cream-50 to-cream-100">
                         <img
-                          src={car.image}
+                          src={imgUrl(car.image, { width: 600 })}
                           alt={car.name}
                           className="w-full h-full object-cover transition duration-500 group-hover:scale-105"
+                          loading="lazy"
                           decoding="async"
                         />
                       </div>

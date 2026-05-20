@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { getCar, getCars } from "../lib/api";
+import { imgUrl } from "../lib/cloudinary";
 import {
   SeatIcon,
   GearIcon,
@@ -109,7 +110,7 @@ export default function CarDetails() {
               <AnimatePresence mode="wait">
                 <motion.img
                   key={activeImg}
-                  src={car.gallery[activeImg]}
+                  src={imgUrl(car.gallery[activeImg], { width: 1200 })}
                   alt={`${car.name} photo ${activeImg + 1}`}
                   className="absolute inset-0 w-full h-full object-cover"
                   fetchPriority="high"
@@ -133,7 +134,7 @@ export default function CarDetails() {
                   }`}
                   aria-label={`View photo ${i + 1}`}
                 >
-                  <img src={src} alt="" className="w-full h-full object-cover" loading="lazy" decoding="async" />
+                  <img src={imgUrl(src, { width: 300 })} alt="" className="w-full h-full object-cover" loading="lazy" decoding="async" />
                 </button>
               ))}
             </div>
@@ -382,7 +383,7 @@ export default function CarDetails() {
                   >
                     <div className="aspect-[16/10] overflow-hidden">
                       <img
-                        src={c.image}
+                        src={imgUrl(c.image, { width: 600 })}
                         alt={c.name}
                         className="w-full h-full object-cover hover:scale-105 transition duration-500"
                         loading="lazy"

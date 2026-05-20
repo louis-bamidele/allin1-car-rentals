@@ -12,8 +12,10 @@ const PHOTO_LABELS = [
   "Photo 4: Interior, rear seats or boot",
 ];
 
+const YEAR_RE = /^\d{4}(\s*-\s*\d{4})?$/;
+
 const EMPTY_FORM = {
-  name: "", category: "Economy", year: new Date().getFullYear(),
+  name: "", category: "Economy", year: String(new Date().getFullYear()),
   color: "", seats: 5, doors: 5, transmission: "Automatic",
   fuel: "Petrol", consumption: "", bags: 2,
   dailyRate: "", weeklyRate: "", monthlyRate: "",
@@ -205,11 +207,19 @@ function CarForm({ token, editCar, onDone }) {
             </select>
           </Field>
           <Field label="Year">
-            <select className={selectCls} value={form.year} onChange={(e) => set("year", e.target.value)}>
-              {Array.from({ length: new Date().getFullYear() - 1999 }, (_, i) => new Date().getFullYear() - i).map((y) => (
-                <option key={y} value={y}>{y}</option>
-              ))}
-            </select>
+            <input
+              type="text"
+              className={inputCls}
+              value={form.year}
+              onChange={(e) => set("year", e.target.value)}
+              onBlur={(e) => {
+                const v = e.target.value.trim();
+                if (v && !YEAR_RE.test(v))
+                  set("year", String(new Date().getFullYear()));
+              }}
+              placeholder="e.g. 2023 or 2020 - 2023"
+              title="Single year (2023) or range (2020 - 2023)"
+            />
           </Field>
           <Field label="Color">
             <input className={inputCls} value={form.color} onChange={(e) => set("color", e.target.value)} placeholder="e.g. White" />

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { getCars } from "../lib/api";
+import { imgUrl } from "../lib/cloudinary";
 import { SeatIcon, GearIcon, FuelIcon, ArrowIcon } from "./Icons";
 import Reveal, { fadeUp, stagger } from "./motion/Reveal";
 import { useLang } from "../contexts/LanguageContext";
@@ -77,7 +78,7 @@ export default function Fleet() {
                 <Link to={`/car/${car.slug}`} className="block group">
                   <div className="aspect-[16/10] overflow-hidden bg-gradient-to-br from-cream-50 to-cream-100">
                     <motion.img
-                      src={car.image}
+                      src={imgUrl(car.image, { width: 600 })}
                       alt={car.name}
                       className="w-full h-full object-cover"
                       whileHover={{ scale: 1.06 }}

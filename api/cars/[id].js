@@ -77,7 +77,7 @@ export default async function handler(req, res) {
           dailyRate:    Number(dailyRate),
           weeklyRate:   weeklyRate   ? Number(weeklyRate)   : car.weeklyRate,
           monthlyRate:  monthlyRate  ? Number(monthlyRate)  : car.monthlyRate,
-          year:         year         ? Number(year)         : car.year,
+          year:         year         || car.year,
           color:        color        !== undefined ? color  : car.color,
           image:        photos[0],
           gallery:      photos,

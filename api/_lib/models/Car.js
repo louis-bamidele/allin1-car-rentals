@@ -14,7 +14,7 @@ const carSchema = new mongoose.Schema(
     dailyRate:      { type: Number, required: true },
     weeklyRate:     { type: Number, default: 0 },
     monthlyRate:    { type: Number, default: 0 },
-    year:           { type: Number, default: () => new Date().getFullYear() },
+    year:           { type: String, default: () => String(new Date().getFullYear()) },
     color:          { type: String, default: "" },
     image:          { type: String, required: true },
     gallery:        { type: [String], required: true },
