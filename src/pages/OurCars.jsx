@@ -178,17 +178,25 @@ export default function OurCars() {
                           {car.name}
                         </Link>
                       </h2>
-                      <p className="mt-2 text-sm text-slate-600">{car.description}</p>
+                      {car.description && (
+                        <p className="mt-2 text-sm text-slate-600">{car.description}</p>
+                      )}
                       <ul className="mt-4 grid grid-cols-3 gap-2 text-xs text-slate-600 border-t border-navy-100 pt-4">
-                        <li className="flex items-center gap-1.5">
-                          <SeatIcon className="w-4 h-4 text-navy-700" /> {car.seats} {t.ourCars.seats}
-                        </li>
-                        <li className="flex items-center gap-1.5">
-                          <GearIcon className="w-4 h-4 text-navy-700" /> {car.transmission}
-                        </li>
-                        <li className="flex items-center gap-1.5">
-                          <FuelIcon className="w-4 h-4 text-navy-700" /> {car.fuel}
-                        </li>
+                        {car.seats && (
+                          <li className="flex items-center gap-1.5">
+                            <SeatIcon className="w-4 h-4 text-navy-700" /> {car.seats} {t.ourCars.seats}
+                          </li>
+                        )}
+                        {car.transmission && (
+                          <li className="flex items-center gap-1.5">
+                            <GearIcon className="w-4 h-4 text-navy-700" /> {car.transmission}
+                          </li>
+                        )}
+                        {car.fuel && (
+                          <li className="flex items-center gap-1.5">
+                            <FuelIcon className="w-4 h-4 text-navy-700" /> {car.fuel}
+                          </li>
+                        )}
                       </ul>
                       <Link to={`/car/${car.slug}`} className="btn-secondary mt-5">
                         {t.ourCars.moreAbout} <ArrowIcon className="w-4 h-4" />

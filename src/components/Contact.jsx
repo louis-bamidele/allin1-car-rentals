@@ -1,4 +1,4 @@
-import { PhoneIcon, MapPinIcon, ClockIcon, WhatsAppIcon } from "./Icons";
+import { PhoneIcon, MapPinIcon, ClockIcon, WhatsAppIcon, MailIcon } from "./Icons";
 import { useLang } from "../contexts/LanguageContext";
 
 export default function Contact() {
@@ -23,15 +23,29 @@ export default function Contact() {
           <WhatsAppIcon className="w-5 h-5" /> {t.contact.whatsappBtn}
         </a>
 
-        <ul className="mt-10 grid sm:grid-cols-3 gap-6 text-left">
+        <ul className="mt-10 grid sm:grid-cols-2 gap-6 text-left">
           <li className="flex items-start gap-3">
             <div className="w-10 h-10 grid place-items-center rounded-xl bg-navy-900 text-gold-400 shrink-0">
               <PhoneIcon className="w-5 h-5" />
             </div>
             <div>
               <div className="text-sm text-slate-500">{t.contact.phoneLabel}</div>
-              <a href="tel:+59995178686" className="font-semibold text-navy-900">
+              <a href="tel:+59995178686" className="font-semibold text-navy-900 hover:text-gold-600 transition">
                 +5999 517 8686
+              </a>
+            </div>
+          </li>
+          <li className="flex items-start gap-3">
+            <div className="w-10 h-10 grid place-items-center rounded-xl bg-navy-900 text-gold-400 shrink-0">
+              <MailIcon className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="text-sm text-slate-500">{t.contact.emailLabel}</div>
+              <a
+                href="mailto:allin1reservation@gmail.com"
+                className="font-semibold text-navy-900 hover:text-gold-600 transition break-all"
+              >
+                allin1reservation@gmail.com
               </a>
             </div>
           </li>

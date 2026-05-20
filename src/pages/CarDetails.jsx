@@ -149,9 +149,11 @@ export default function CarDetails() {
             <h1 className="mt-2 text-2xl sm:text-3xl font-display font-bold">
               {car.name}
             </h1>
-            <p className="mt-2 text-slate-600 text-sm sm:text-base">
-              {car.description}
-            </p>
+            {car.description && (
+              <p className="mt-2 text-slate-600 text-sm sm:text-base">
+                {car.description}
+              </p>
+            )}
 
             <div className="mt-5 flex items-baseline gap-2">
               <div className="text-3xl sm:text-4xl font-display font-bold text-navy-900">
@@ -159,9 +161,13 @@ export default function CarDetails() {
               </div>
               <div className="text-slate-500 text-sm">{t.carDetails.perDay}</div>
             </div>
-            <div className="mt-1 text-xs text-slate-500">
-              {t.carDetails.weekly} ${car.weeklyRate} &middot; {t.carDetails.monthly} ${car.monthlyRate}
-            </div>
+            {(car.weeklyRate > 0 || car.monthlyRate > 0) && (
+              <div className="mt-1 text-xs text-slate-500">
+                {car.weeklyRate > 0 && <span>{t.carDetails.weekly} ${car.weeklyRate}</span>}
+                {car.weeklyRate > 0 && car.monthlyRate > 0 && <span> &middot; </span>}
+                {car.monthlyRate > 0 && <span>{t.carDetails.monthly} ${car.monthlyRate}</span>}
+              </div>
+            )}
 
             <ul className="mt-5 grid grid-cols-3 gap-2 text-xs text-slate-600 border-y border-navy-100 py-4">
               <li className="flex items-center gap-1.5">
@@ -283,30 +289,36 @@ export default function CarDetails() {
             <h2 className="mt-3 text-2xl sm:text-3xl md:text-4xl font-bold">
               {t.carDetails.aboutHeading}
             </h2>
-            <p className="mt-4 text-slate-600 leading-relaxed">
-              {car.longDescription}
-            </p>
+            {car.longDescription && (
+              <p className="mt-4 text-slate-600 leading-relaxed">
+                {car.longDescription}
+              </p>
+            )}
 
-            <h3 className="mt-8 font-display font-semibold text-lg text-navy-900">
-              {t.carDetails.featuresHeading}
-            </h3>
-            <Reveal
-              variants={stagger}
-              className="mt-4 grid sm:grid-cols-2 gap-x-6 gap-y-3"
-            >
-              {car.features.map((f) => (
-                <motion.li
-                  key={f}
-                  variants={fadeUp}
-                  className="flex items-start gap-2 text-sm text-navy-900/85 list-none"
+            {car.features?.length > 0 && (
+              <>
+                <h3 className="mt-8 font-display font-semibold text-lg text-navy-900">
+                  {t.carDetails.featuresHeading}
+                </h3>
+                <Reveal
+                  variants={stagger}
+                  className="mt-4 grid sm:grid-cols-2 gap-x-6 gap-y-3"
                 >
-                  <span className="mt-0.5 grid place-items-center w-5 h-5 rounded-full bg-gold-500 text-navy-900 shrink-0">
-                    <CheckIcon className="w-3 h-3" />
-                  </span>
-                  {f}
-                </motion.li>
-              ))}
-            </Reveal>
+                  {car.features.map((f, i) => (
+                    <motion.li
+                      key={i}
+                      variants={fadeUp}
+                      className="flex items-start gap-2 text-sm text-navy-900/85 list-none"
+                    >
+                      <span className="mt-0.5 grid place-items-center w-5 h-5 rounded-full bg-gold-500 text-navy-900 shrink-0">
+                        <CheckIcon className="w-3 h-3" />
+                      </span>
+                      {f}
+                    </motion.li>
+                  ))}
+                </Reveal>
+              </>
+            )}
           </Reveal>
 
           <Reveal className="lg:col-span-5" variants={fadeUp}>
@@ -321,23 +333,25 @@ export default function CarDetails() {
                 <Row label={t.carDetails.specsLabels.transmission} value={car.transmission} />
                 <Row label={t.carDetails.specsLabels.fuel} value={car.fuel} />
                 <Row label={t.carDetails.specsLabels.consumption} value={car.consumption} />
-                <Row label={t.carDetails.specsLabels.luggage} value={`${car.bags} ${t.carDetails.specsLabels.luggage}`} />
+                <Row label={t.carDetails.specsLabels.luggageLabel} value={car.bags ? `${car.bags} ${t.carDetails.specsLabels.luggage}` : null} />
               </dl>
             </div>
 
-            <div className="card mt-6">
-              <h3 className="font-display font-semibold text-lg">{t.carDetails.whyHeading}</h3>
-              <ul className="mt-4 space-y-3 text-sm text-slate-700">
-                {car.highlights.map((h) => (
-                  <li key={h} className="flex items-start gap-2">
-                    <span className="mt-0.5 grid place-items-center w-5 h-5 rounded-full bg-gold-500 text-navy-900 shrink-0">
-                      <CheckIcon className="w-3 h-3" />
-                    </span>
-                    {h}
-                  </li>
-                ))}
-              </ul>
-            </div>
+            {car.highlights?.length > 0 && (
+              <div className="card mt-6">
+                <h3 className="font-display font-semibold text-lg">{t.carDetails.whyHeading}</h3>
+                <ul className="mt-4 space-y-3 text-sm text-slate-700">
+                  {car.highlights.map((h, i) => (
+                    <li key={i} className="flex items-start gap-2">
+                      <span className="mt-0.5 grid place-items-center w-5 h-5 rounded-full bg-gold-500 text-navy-900 shrink-0">
+                        <CheckIcon className="w-3 h-3" />
+                      </span>
+                      {h}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </Reveal>
         </div>
       </section>
@@ -396,6 +410,7 @@ export default function CarDetails() {
 }
 
 function Row({ label, value }) {
+  if (value === null || value === undefined || value === "") return null;
   return (
     <div className="py-2 flex items-center justify-between">
       <dt className="text-slate-500">{label}</dt>

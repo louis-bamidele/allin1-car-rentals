@@ -82,7 +82,16 @@ export default function Footer() {
         <div className="md:col-span-3">
           <h4 className="text-white font-semibold">{t.footer.contactHeading}</h4>
           <ul className="mt-4 space-y-2 text-sm text-white/75">
-            <li>+5999 517 8686</li>
+            <li>
+              <a href="tel:+59995178686" className="hover:text-gold-400 transition">
+                +5999 517 8686
+              </a>
+            </li>
+            <li>
+              <a href="mailto:allin1reservation@gmail.com" className="hover:text-gold-400 transition break-all">
+                allin1reservation@gmail.com
+              </a>
+            </li>
             <li>Curaçao, Caribbean</li>
             <li>{t.footer.hours}</li>
           </ul>
