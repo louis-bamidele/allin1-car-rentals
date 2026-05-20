@@ -288,7 +288,7 @@ function CarForm({ token, editCar, onDone }) {
       {/* Features */}
       <div>
         <h3 className="text-xs font-bold uppercase tracking-widest text-navy-900/40 mb-1">Features</h3>
-        <p className="text-xs text-slate-400 mb-4">Fill in as many as apply — empty fields are ignored.</p>
+        <p className="text-xs text-slate-400 mb-4">Fill in as many as apply. Empty fields are ignored.</p>
         <div className="grid sm:grid-cols-2 gap-3">
           {form.features.map((f, i) => (
             <Field key={i} label={`Feature ${i + 1}`}>
@@ -302,7 +302,7 @@ function CarForm({ token, editCar, onDone }) {
       {/* Highlights */}
       <div>
         <h3 className="text-xs font-bold uppercase tracking-widest text-navy-900/40 mb-1">Highlights</h3>
-        <p className="text-xs text-slate-400 mb-4">Short selling points shown on the car detail page — fill what you have.</p>
+        <p className="text-xs text-slate-400 mb-4">Short selling points shown on the car detail page. Fill what you have.</p>
         <div className="grid sm:grid-cols-3 gap-4">
           {form.highlights.map((h, i) => (
             <Field key={i} label={`Highlight ${i + 1}`}>

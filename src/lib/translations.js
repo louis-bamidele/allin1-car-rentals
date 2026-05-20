@@ -651,7 +651,7 @@ export const translations = {
     banner: {
       heading: "Één eiland,",
       headingAccent: "elke weg wacht op je.",
-      body: "Van de kleurrijke straten van Willemstad tot de wilde westkust — het hele eiland ligt voor je klaar. Of je nu een week of een maand hier bent, ontdek alles op jouw eigen tempo met een schone, betrouwbare huurauto.",
+      body: "Van de kleurrijke straten van Willemstad tot de wilde westkust, het hele eiland ligt voor je klaar. Of je nu een week of een maand hier bent, ontdek alles op jouw eigen tempo met een schone, betrouwbare huurauto.",
       cta: "Nu boeken",
       imgAlt: "Waterfront van Willemstad, Curaçao",
     },
@@ -726,7 +726,7 @@ export const translations = {
     services: {
       eyebrow: "Diensten",
       heading: "Voor reizigers, locals en bedrijven.",
-      body: "Of je nu een auto nodig hebt voor een weekend op het strand of een maand voor werk — wij hebben een passend aanbod.",
+      body: "Of je nu een auto nodig hebt voor een weekend op het strand of een maand voor werk, wij hebben een passend aanbod.",
       items: [
         {
           title: "Luchthaven ophalen",
@@ -757,7 +757,7 @@ export const translations = {
     about: {
       eyebrow: "Over All in 1",
       heading: "Een klein team dat zich bekommert om jouw reis.",
-      body: "All in 1 Car Rentals begon met een eenvoudig idee: reizigers verdienen een schone, betrouwbare auto met vriendelijke lokale ondersteuning — zonder de hoge prijzen van grote verhuurbedrijven. Wij kiezen onze vloot op comfort en zuinigheid en houden onze service persoonlijk. Als je bij ons boekt, praat je met een echte persoon die het eiland kent.",
+      body: "All in 1 Car Rentals begon met een eenvoudig idee: reizigers verdienen een schone, betrouwbare auto met vriendelijke lokale ondersteuning, zonder de hoge prijzen van grote verhuurbedrijven. Wij kiezen onze vloot op comfort en zuinigheid en houden onze service persoonlijk. Als je bij ons boekt, praat je met een echte persoon die het eiland kent.",
       yearsLabel:
         "Jaar lang reizigers helpen de juiste auto op het eiland te vinden.",
       points: [
