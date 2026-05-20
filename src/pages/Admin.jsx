@@ -116,6 +116,7 @@ function CarForm({ token, editCar, onDone }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  const [yearError, setYearError] = useState("");
   const fileRefs = [useRef(), useRef(), useRef(), useRef()];
 
   function set(key, val) { setForm((f) => ({ ...f, [key]: val })); }
@@ -209,17 +210,19 @@ function CarForm({ token, editCar, onDone }) {
           <Field label="Year">
             <input
               type="text"
-              className={inputCls}
+              className={`${inputCls} ${yearError ? "border-red-400 focus:border-red-400 focus:ring-red-400/20" : ""}`}
               value={form.year}
-              onChange={(e) => set("year", e.target.value)}
+              onChange={(e) => { set("year", e.target.value); setYearError(""); }}
               onBlur={(e) => {
                 const v = e.target.value.trim();
                 if (v && !YEAR_RE.test(v))
-                  set("year", String(new Date().getFullYear()));
+                  setYearError('Invalid format. Use a single year (e.g. "2023") or a range (e.g. "2020 - 2023").');
               }}
               placeholder="e.g. 2023 or 2020 - 2023"
-              title="Single year (2023) or range (2020 - 2023)"
             />
+            {yearError && (
+              <p className="mt-1 text-xs text-red-600">{yearError}</p>
+            )}
           </Field>
           <Field label="Color">
             <input className={inputCls} value={form.color} onChange={(e) => set("color", e.target.value)} placeholder="e.g. White" />
