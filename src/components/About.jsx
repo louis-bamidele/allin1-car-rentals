@@ -16,9 +16,6 @@ export default function About() {
               className="rounded-3xl shadow-card w-full object-cover aspect-[4/3]"
             />
             <div className="hidden md:block absolute -bottom-6 -right-6 bg-navy-900 text-white p-6 rounded-2xl shadow-card max-w-xs">
-              <div className="text-3xl font-display font-bold text-gold-400">
-                5+
-              </div>
               <p className="text-sm text-white/80 mt-1">{t.about.yearsLabel}</p>
             </div>
           </div>
