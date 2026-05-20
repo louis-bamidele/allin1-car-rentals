@@ -11,17 +11,15 @@ export default function About() {
         <Reveal className="lg:col-span-6" variants={fadeUp}>
           <div className="relative">
             <img
-              src="https://images.pexels.com/photos/7688161/pexels-photo-7688161.jpeg"
+              src="/images/about.jpeg"
               alt="Friendly team handing over a rental car"
               className="rounded-3xl shadow-card w-full object-cover aspect-[4/3]"
             />
             <div className="hidden md:block absolute -bottom-6 -right-6 bg-navy-900 text-white p-6 rounded-2xl shadow-card max-w-xs">
               <div className="text-3xl font-display font-bold text-gold-400">
-                10+
+                5+
               </div>
-              <p className="text-sm text-white/80 mt-1">
-                {t.about.yearsLabel}
-              </p>
+              <p className="text-sm text-white/80 mt-1">{t.about.yearsLabel}</p>
             </div>
           </div>
         </Reveal>
@@ -30,9 +28,7 @@ export default function About() {
           <h2 className="mt-3 text-2xl sm:text-3xl md:text-4xl font-bold">
             {t.about.heading}
           </h2>
-          <p className="mt-4 text-slate-600 leading-relaxed">
-            {t.about.body}
-          </p>
+          <p className="mt-4 text-slate-600 leading-relaxed">{t.about.body}</p>
           <ul className="mt-6 grid sm:grid-cols-2 gap-3">
             {t.about.points.map((p) => (
               <li
