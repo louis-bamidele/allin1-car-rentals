@@ -34,7 +34,11 @@ export const addCar = (formData, token) =>
     body: formData,
   }).then(async (res) => {
     const data = await res.json();
-    if (!res.ok) throw new Error(data.message || "Failed to add car");
+    if (!res.ok) {
+      const err = new Error(data.message || "Failed to add car");
+      if (data.fieldErrors) err.fieldErrors = data.fieldErrors;
+      throw err;
+    }
     return data;
   });
 
@@ -45,7 +49,11 @@ export const updateCar = (id, formData, token) =>
     body: formData,
   }).then(async (res) => {
     const data = await res.json();
-    if (!res.ok) throw new Error(data.message || "Failed to update car");
+    if (!res.ok) {
+      const err = new Error(data.message || "Failed to update car");
+      if (data.fieldErrors) err.fieldErrors = data.fieldErrors;
+      throw err;
+    }
     return data;
   });
 

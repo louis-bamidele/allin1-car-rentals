@@ -91,7 +91,33 @@ export default async function handler(req, res) {
 
       return res.json(updated);
     } catch (err) {
-      console.error(err);
+      console.error("PUT /api/cars/:id error:", err);
+
+      // Mongoose validation error — map each failing field to its message
+      if (err.name === "ValidationError") {
+        const fieldErrors = {};
+        for (const [field, e] of Object.entries(err.errors)) {
+          // slug errors surface in the UI as "name"
+          const uiField = field === "slug" ? "name" : field;
+          fieldErrors[uiField] = e.message;
+        }
+        return res.status(400).json({
+          message: `Please fix the following field(s): ${Object.keys(fieldErrors).join(", ")}`,
+          fieldErrors,
+        });
+      }
+
+      // MongoDB duplicate-key error (e.g. slug/name already taken)
+      if (err.code === 11000) {
+        const dupField = Object.keys(err.keyValue || {})[0] || "field";
+        const uiField = dupField === "slug" ? "name" : dupField;
+        const fieldErrors = { [uiField]: `A car with this ${uiField} already exists.` };
+        return res.status(400).json({
+          message: fieldErrors[uiField],
+          fieldErrors,
+        });
+      }
+
       return res.status(500).json({ message: err.message || "Server error" });
     }
   }

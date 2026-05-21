@@ -92,7 +92,7 @@ function LoginScreen({ onLogin }) {
 }
 
 // ─── Field helper ─────────────────────────────────────────────────────────────
-function Field({ label, required = false, children }) {
+function Field({ label, required = false, error, children }) {
   return (
     <div>
       <label className="block text-xs font-semibold uppercase tracking-wide text-navy-900/70 mb-1">
@@ -102,6 +102,7 @@ function Field({ label, required = false, children }) {
           : <span className="text-slate-400 ml-1 font-normal normal-case tracking-normal">(optional)</span>}
       </label>
       {children}
+      {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
     </div>
   );
 }
@@ -115,11 +116,18 @@ function CarForm({ token, editCar, onDone }) {
   const [form, setForm] = useState(isEdit ? carToForm(editCar) : EMPTY_FORM);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState({});
   const [success, setSuccess] = useState(false);
   const [yearError, setYearError] = useState("");
   const fileRefs = [useRef(), useRef(), useRef(), useRef()];
 
-  function set(key, val) { setForm((f) => ({ ...f, [key]: val })); }
+  function set(key, val) {
+    setForm((f) => ({ ...f, [key]: val }));
+    // Clear the field-level error for this key as soon as the user edits it
+    if (fieldErrors[key]) {
+      setFieldErrors((prev) => { const next = { ...prev }; delete next[key]; return next; });
+    }
+  }
 
   function setFeature(i, val) {
     const features = [...form.features]; features[i] = val; set("features", features);
@@ -148,7 +156,7 @@ function CarForm({ token, editCar, onDone }) {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    setError(""); setSuccess(false);
+    setError(""); setSuccess(false); setFieldErrors({});
 
     if (!isEdit && form.photos.some((p) => !p)) {
       setError("Please select all 4 photos before submitting."); return;
@@ -185,6 +193,7 @@ function CarForm({ token, editCar, onDone }) {
       onDone();
     } catch (err) {
       setError(err.message);
+      if (err.fieldErrors) setFieldErrors(err.fieldErrors);
     } finally {
       setLoading(false);
     }
@@ -199,18 +208,29 @@ function CarForm({ token, editCar, onDone }) {
       <div>
         <h3 className="text-xs font-bold uppercase tracking-widest text-navy-900/40 mb-4">Basic Info</h3>
         <div className="grid sm:grid-cols-2 gap-4">
-          <Field label="Car Name" required>
-            <input required className={inputCls} value={form.name} onChange={(e) => set("name", e.target.value)} placeholder="e.g. Kia Picanto" />
+          <Field label="Car Name" required error={fieldErrors.name}>
+            <input
+              required
+              className={`${inputCls} ${fieldErrors.name ? "border-red-400 focus:border-red-400 focus:ring-red-400/20" : ""}`}
+              value={form.name}
+              onChange={(e) => set("name", e.target.value)}
+              placeholder="e.g. Kia Picanto"
+            />
           </Field>
-          <Field label="Category" required>
-            <select required className={selectCls} value={form.category} onChange={(e) => set("category", e.target.value)}>
+          <Field label="Category" required error={fieldErrors.category}>
+            <select
+              required
+              className={`${selectCls} ${fieldErrors.category ? "border-red-400 focus:border-red-400 focus:ring-red-400/20" : ""}`}
+              value={form.category}
+              onChange={(e) => set("category", e.target.value)}
+            >
               {CATEGORIES.map((c) => <option key={c}>{c}</option>)}
             </select>
           </Field>
-          <Field label="Year">
+          <Field label="Year" error={fieldErrors.year || yearError}>
             <input
               type="text"
-              className={`${inputCls} ${yearError ? "border-red-400 focus:border-red-400 focus:ring-red-400/20" : ""}`}
+              className={`${inputCls} ${(yearError || fieldErrors.year) ? "border-red-400 focus:border-red-400 focus:ring-red-400/20" : ""}`}
               value={form.year}
               onChange={(e) => { set("year", e.target.value); setYearError(""); }}
               onBlur={(e) => {
@@ -220,12 +240,14 @@ function CarForm({ token, editCar, onDone }) {
               }}
               placeholder="e.g. 2023 or 2020 - 2023"
             />
-            {yearError && (
-              <p className="mt-1 text-xs text-red-600">{yearError}</p>
-            )}
           </Field>
-          <Field label="Color">
-            <input className={inputCls} value={form.color} onChange={(e) => set("color", e.target.value)} placeholder="e.g. White" />
+          <Field label="Color" error={fieldErrors.color}>
+            <input
+              className={`${inputCls} ${fieldErrors.color ? "border-red-400 focus:border-red-400 focus:ring-red-400/20" : ""}`}
+              value={form.color}
+              onChange={(e) => set("color", e.target.value)}
+              placeholder="e.g. White"
+            />
           </Field>
         </div>
       </div>
@@ -234,27 +256,27 @@ function CarForm({ token, editCar, onDone }) {
       <div>
         <h3 className="text-xs font-bold uppercase tracking-widest text-navy-900/40 mb-4">Specs</h3>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <Field label="Seats">
-            <input type="number" className={inputCls} value={form.seats} onChange={(e) => set("seats", e.target.value)} min="2" max="9" />
+          <Field label="Seats" error={fieldErrors.seats}>
+            <input type="number" className={`${inputCls} ${fieldErrors.seats ? "border-red-400 focus:border-red-400 focus:ring-red-400/20" : ""}`} value={form.seats} onChange={(e) => set("seats", e.target.value)} min="2" max="9" />
           </Field>
-          <Field label="Doors">
-            <input type="number" className={inputCls} value={form.doors} onChange={(e) => set("doors", e.target.value)} min="2" max="5" />
+          <Field label="Doors" error={fieldErrors.doors}>
+            <input type="number" className={`${inputCls} ${fieldErrors.doors ? "border-red-400 focus:border-red-400 focus:ring-red-400/20" : ""}`} value={form.doors} onChange={(e) => set("doors", e.target.value)} min="2" max="5" />
           </Field>
-          <Field label="Luggage Bags">
-            <input type="number" className={inputCls} value={form.bags} onChange={(e) => set("bags", e.target.value)} min="1" max="10" />
+          <Field label="Luggage Bags" error={fieldErrors.bags}>
+            <input type="number" className={`${inputCls} ${fieldErrors.bags ? "border-red-400 focus:border-red-400 focus:ring-red-400/20" : ""}`} value={form.bags} onChange={(e) => set("bags", e.target.value)} min="1" max="10" />
           </Field>
-          <Field label="Transmission">
-            <select className={selectCls} value={form.transmission} onChange={(e) => set("transmission", e.target.value)}>
+          <Field label="Transmission" error={fieldErrors.transmission}>
+            <select className={`${selectCls} ${fieldErrors.transmission ? "border-red-400 focus:border-red-400 focus:ring-red-400/20" : ""}`} value={form.transmission} onChange={(e) => set("transmission", e.target.value)}>
               {TRANSMISSIONS.map((t) => <option key={t}>{t}</option>)}
             </select>
           </Field>
-          <Field label="Fuel Type">
-            <select className={selectCls} value={form.fuel} onChange={(e) => set("fuel", e.target.value)}>
+          <Field label="Fuel Type" error={fieldErrors.fuel}>
+            <select className={`${selectCls} ${fieldErrors.fuel ? "border-red-400 focus:border-red-400 focus:ring-red-400/20" : ""}`} value={form.fuel} onChange={(e) => set("fuel", e.target.value)}>
               {FUELS.map((f) => <option key={f}>{f}</option>)}
             </select>
           </Field>
-          <Field label="Consumption (L/100km)">
-            <input className={inputCls} value={form.consumption} onChange={(e) => set("consumption", e.target.value)} placeholder="e.g. 5.0 L / 100 km" />
+          <Field label="Consumption (L/100km)" error={fieldErrors.consumption}>
+            <input className={`${inputCls} ${fieldErrors.consumption ? "border-red-400 focus:border-red-400 focus:ring-red-400/20" : ""}`} value={form.consumption} onChange={(e) => set("consumption", e.target.value)} placeholder="e.g. 5.0 L / 100 km" />
           </Field>
         </div>
       </div>
@@ -263,14 +285,14 @@ function CarForm({ token, editCar, onDone }) {
       <div>
         <h3 className="text-xs font-bold uppercase tracking-widest text-navy-900/40 mb-4">Pricing (USD)</h3>
         <div className="grid sm:grid-cols-3 gap-4">
-          <Field label="Daily Rate $" required>
-            <input required type="number" className={inputCls} value={form.dailyRate} onChange={(e) => set("dailyRate", e.target.value)} min="1" placeholder="35" />
+          <Field label="Daily Rate $" required error={fieldErrors.dailyRate}>
+            <input required type="number" className={`${inputCls} ${fieldErrors.dailyRate ? "border-red-400 focus:border-red-400 focus:ring-red-400/20" : ""}`} value={form.dailyRate} onChange={(e) => set("dailyRate", e.target.value)} min="1" placeholder="35" />
           </Field>
-          <Field label="Weekly Rate $">
-            <input type="number" className={inputCls} value={form.weeklyRate} onChange={(e) => set("weeklyRate", e.target.value)} min="0" placeholder="210" />
+          <Field label="Weekly Rate $" error={fieldErrors.weeklyRate}>
+            <input type="number" className={`${inputCls} ${fieldErrors.weeklyRate ? "border-red-400 focus:border-red-400 focus:ring-red-400/20" : ""}`} value={form.weeklyRate} onChange={(e) => set("weeklyRate", e.target.value)} min="0" placeholder="210" />
           </Field>
-          <Field label="Monthly Rate $">
-            <input type="number" className={inputCls} value={form.monthlyRate} onChange={(e) => set("monthlyRate", e.target.value)} min="0" placeholder="780" />
+          <Field label="Monthly Rate $" error={fieldErrors.monthlyRate}>
+            <input type="number" className={`${inputCls} ${fieldErrors.monthlyRate ? "border-red-400 focus:border-red-400 focus:ring-red-400/20" : ""}`} value={form.monthlyRate} onChange={(e) => set("monthlyRate", e.target.value)} min="0" placeholder="780" />
           </Field>
         </div>
       </div>
@@ -279,11 +301,11 @@ function CarForm({ token, editCar, onDone }) {
       <div>
         <h3 className="text-xs font-bold uppercase tracking-widest text-navy-900/40 mb-4">Descriptions</h3>
         <div className="space-y-4">
-          <Field label="Short Description (1-2 sentences)">
-            <input className={inputCls} value={form.description} onChange={(e) => set("description", e.target.value)} placeholder="Compact and fuel friendly…" />
+          <Field label="Short Description (1-2 sentences)" error={fieldErrors.description}>
+            <input className={`${inputCls} ${fieldErrors.description ? "border-red-400 focus:border-red-400 focus:ring-red-400/20" : ""}`} value={form.description} onChange={(e) => set("description", e.target.value)} placeholder="Compact and fuel friendly…" />
           </Field>
-          <Field label="Full Description (2-3 sentences)">
-            <textarea rows={4} className={inputCls} value={form.longDescription} onChange={(e) => set("longDescription", e.target.value)} placeholder="Describe the driving experience, who it suits, standout features…" />
+          <Field label="Full Description (2-3 sentences)" error={fieldErrors.longDescription}>
+            <textarea rows={4} className={`${inputCls} ${fieldErrors.longDescription ? "border-red-400 focus:border-red-400 focus:ring-red-400/20" : ""}`} value={form.longDescription} onChange={(e) => set("longDescription", e.target.value)} placeholder="Describe the driving experience, who it suits, standout features…" />
           </Field>
         </div>
       </div>
@@ -319,7 +341,10 @@ function CarForm({ token, editCar, onDone }) {
       {/* Photos */}
       <div>
         <h3 className="text-xs font-bold uppercase tracking-widest text-navy-900/40 mb-1">Photos</h3>
-        {isEdit && <p className="text-xs text-slate-500 mb-4">Existing photos are shown. Click a photo to replace it, or leave it to keep the current one.</p>}
+        {isEdit && <p className="text-xs text-slate-500 mb-2">Existing photos are shown. Click a photo to replace it, or leave it to keep the current one.</p>}
+        {(fieldErrors.image || fieldErrors.gallery) && (
+          <p className="mb-3 text-xs text-red-600">{fieldErrors.image || fieldErrors.gallery}</p>
+        )}
         <div className="grid sm:grid-cols-2 gap-5">
           {PHOTO_LABELS.map((label, i) => {
             const hasPreview = !!form.previews[i];

@@ -137,9 +137,7 @@ export default function Navbar() {
               <PhoneIcon className="w-3.5 h-3.5 shrink-0" /> +5999 517 8686
             </a>
             <span className="hidden md:inline text-white/60">|</span>
-            <span className="hidden md:inline">
-              {t.infoBar.openHours}
-            </span>
+            <span className="hidden md:inline">{t.infoBar.openHours}</span>
           </div>
           <a
             href="https://wa.me/59995178686"
@@ -154,7 +152,10 @@ export default function Navbar() {
 
       <nav className="container-x flex items-center justify-between py-3">
         <Link to="/" className="flex items-center shrink-0">
-          <Logo className="h-10 sm:h-12 lg:h-14 w-auto transition-all duration-300" />
+          <Logo
+            className="h-16 
+          \sm:h-18 lg:h-20 w-auto transition-all duration-300"
+          />
         </Link>
 
         {/* Desktop nav */}
