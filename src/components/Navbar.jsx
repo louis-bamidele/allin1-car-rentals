@@ -153,8 +153,8 @@ export default function Navbar() {
       <nav className="container-x flex items-center justify-between py-3">
         <Link to="/" className="flex items-center shrink-0">
           <Logo
-            className="h-16 
-          \sm:h-18 lg:h-20 w-auto transition-all duration-300"
+            className="h-13 
+          sm:h-18 lg:h-20 w-auto transition-all duration-300"
           />
         </Link>
 
