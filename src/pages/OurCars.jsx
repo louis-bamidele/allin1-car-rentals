@@ -145,6 +145,14 @@ export default function OurCars() {
                 ))}
               </div>
 
+              {cars.length === 0 && (
+                <div className="py-16 text-center">
+                  <p className="text-lg font-semibold text-navy-900">{t.ourCars.emptyTitle}</p>
+                  <p className="mt-2 text-sm text-slate-500">{t.ourCars.emptyBody}</p>
+                </div>
+              )}
+
+              {cars.length > 0 && (
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
                 {cars.map((car) => (
                   <article
@@ -207,6 +215,7 @@ export default function OurCars() {
                   </article>
                 ))}
               </div>
+              )}
             </div>
           </section>
         </motion.div>

@@ -61,7 +61,14 @@ export default function Fleet() {
           </div>
         )}
 
-        {!fetching && (
+        {!fetching && visible.length === 0 && (
+          <div className="mt-8 md:mt-10 py-16 text-center">
+            <p className="text-lg font-semibold text-navy-900">{t.fleet.emptyTitle}</p>
+            <p className="mt-2 text-sm text-slate-500">{t.fleet.emptyBody}</p>
+          </div>
+        )}
+
+        {!fetching && visible.length > 0 && (
           <Reveal
             variants={stagger}
             key={activeIndex}
