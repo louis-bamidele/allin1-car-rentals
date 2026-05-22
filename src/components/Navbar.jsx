@@ -116,7 +116,7 @@ export default function Navbar() {
       ref={headerRef}
       className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${
         transparent
-          ? "bg-transparent"
+          ? "bg-gradient-to-b from-navy-950/60 via-navy-950/20 to-transparent"
           : scrolled || open
             ? "bg-white/95 backdrop-blur shadow-card"
             : "bg-white/90 backdrop-blur"
@@ -153,8 +153,7 @@ export default function Navbar() {
       <nav className="container-x flex items-center justify-between py-3">
         <Link to="/" className="flex items-center shrink-0">
           <Logo
-            className="h-13 
-          sm:h-18 lg:h-20 w-auto transition-all duration-300"
+            className={`h-13 sm:h-18 lg:h-20 w-auto transition-all duration-300`}
           />
         </Link>
 

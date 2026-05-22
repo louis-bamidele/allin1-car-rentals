@@ -26,6 +26,8 @@ export default function DestinationBanner() {
       {/* Gradient overlays */}
       <div className="absolute inset-0 bg-gradient-to-r from-navy-950/85 via-navy-950/50 to-navy-950/10" />
       <div className="absolute inset-0 bg-gradient-to-t from-navy-950/70 via-transparent to-navy-950/40" />
+      {/* Top scrim — keeps the navbar area dark regardless of image content */}
+      <div className="absolute inset-x-0 top-0 h-36 bg-gradient-to-b from-navy-950/70 to-transparent pointer-events-none" />
 
       {/* Content */}
       <div className="relative z-10 h-full flex flex-col justify-start items-center pb-10 sm:pb-14 lg:pb-16 pt-24 sm:pt-28 lg:pt-32">

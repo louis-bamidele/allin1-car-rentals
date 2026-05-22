@@ -3,6 +3,10 @@ export default {
   content: ["./index.html", "./src/**/*.{js,jsx}"],
   theme: {
     extend: {
+      spacing: {
+        13: "3.25rem",
+        18: "4.5rem",
+      },
       colors: {
         navy: {
           50: "#EEF1FB",
