@@ -659,7 +659,7 @@ function Dashboard({ token, onLogout }) {
   return (
     <div className="min-h-screen bg-cream-50">
       {/* Admin sub-bar — sits below the site Navbar */}
-      <div className="pt-24 sm:pt-28 lg:pt-32">
+      <div className="pt-28 sm:pt-32 lg:pt-40">
         <div className="bg-white border-b border-navy-100 px-4 sm:px-6 py-3 flex items-center justify-between">
           <span className="text-sm font-semibold text-navy-900">Admin Panel</span>
           <button onClick={onLogout}

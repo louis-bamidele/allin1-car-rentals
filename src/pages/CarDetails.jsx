@@ -91,7 +91,7 @@ export default function CarDetails() {
 
   return (
     <motion.div variants={page} initial="initial" animate="animate" exit="exit">
-      <section className="pt-24 sm:pt-28 lg:pt-32 pb-8 bg-navy-900 text-white">
+      <section className="pt-28 sm:pt-32 lg:pt-40 pb-8 bg-navy-900 text-white">
         <div className="container-x">
           <nav className="text-xs sm:text-sm text-white/70">
             <Link to="/" className="hover:text-gold-400">{t.carDetails.breadcrumbHome}</Link>
