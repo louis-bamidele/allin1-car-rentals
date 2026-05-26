@@ -27,8 +27,7 @@ export default function Hero() {
         transition={{ duration: 1.2, ease: "easeOut" }}
         className="absolute inset-0 bg-cover bg-center"
         style={{
-          backgroundImage:
-            "url(https://images.unsplash.com/photo-1502877338535-766e1452684a?auto=format&fit=crop&w=2000&q=80)",
+          backgroundImage: "url('/images/curacao.png')",
         }}
       />
       <div className="absolute inset-0 bg-hero-gradient" />
@@ -37,7 +36,10 @@ export default function Hero() {
 
       <div className="container-x relative z-10 grid lg:grid-cols-12 gap-8 lg:gap-10 items-center">
         <div className="lg:col-span-7 text-white">
-          <motion.span {...inItem(0.05)} className="eyebrow text-gold-400 block">
+          <motion.span
+            {...inItem(0.05)}
+            className="eyebrow text-gold-400 block"
+          >
             {t.hero.eyebrow}
           </motion.span>
           <motion.h1
@@ -58,7 +60,10 @@ export default function Hero() {
             className="mt-5 sm:mt-6 flex flex-col sm:flex-row sm:flex-wrap gap-x-6 gap-y-2 sm:gap-y-3"
           >
             {t.hero.highlights.map((h) => (
-              <li key={h} className="flex items-center gap-2 text-sm text-white/90">
+              <li
+                key={h}
+                className="flex items-center gap-2 text-sm text-white/90"
+              >
                 <span className="grid place-items-center w-6 h-6 rounded-full bg-gold-500 text-navy-900 shrink-0">
                   <CheckIcon className="w-3.5 h-3.5" />
                 </span>
@@ -67,7 +72,10 @@ export default function Hero() {
             ))}
           </motion.ul>
 
-          <motion.div {...inItem(0.36)} className="mt-7 flex flex-col sm:flex-row gap-3">
+          <motion.div
+            {...inItem(0.36)}
+            className="mt-7 flex flex-col sm:flex-row gap-3"
+          >
             <Link to="/cars" className="btn-primary w-full sm:w-auto">
               {t.hero.browseFleet}
             </Link>
@@ -88,7 +96,10 @@ export default function Hero() {
           transition={{ delay: 0.3, duration: 0.6, ease }}
           className="lg:col-span-5 w-full"
         >
-          <div id="book" className="rounded-2xl sm:rounded-3xl bg-white/10 backdrop-blur p-2 border border-white/15">
+          <div
+            id="book"
+            className="rounded-2xl sm:rounded-3xl bg-white/10 backdrop-blur p-2 border border-white/15"
+          >
             <div className="text-center text-white/90 text-sm pt-2 pb-3">
               {t.hero.quickBooking}
             </div>
