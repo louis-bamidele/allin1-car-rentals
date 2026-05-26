@@ -1,5 +1,4 @@
 import { v2 as cloudinary } from "cloudinary";
-import { CloudinaryStorage } from "multer-storage-cloudinary";
 import multer from "multer";
 
 cloudinary.config({
@@ -8,18 +7,31 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const storage = new CloudinaryStorage({
-  cloudinary,
-  params: {
-    folder: "allin1-car-rentals",
-    // No allowed_formats restriction — accept any image format (HEIC, AVIF, etc.)
-    // and let Cloudinary auto-convert. The transformation below normalises output.
-    resource_type: "image",
-    transformation: [{ width: 1200, height: 750, crop: "fill", quality: 85, fetch_format: "auto" }],
-  },
+// Memory storage — files land in req.files[name][0].buffer, never touch disk
+export const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 10 * 1024 * 1024 },
 });
 
-export const upload = multer({ storage, limits: { fileSize: 10 * 1024 * 1024 } });
+// Push a single file buffer directly to Cloudinary and return the secure URL
+export function uploadToCloudinary(buffer) {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      {
+        folder: "allin1-car-rentals",
+        resource_type: "image",
+        transformation: [
+          { width: 1200, height: 750, crop: "fill", quality: 85, fetch_format: "auto" },
+        ],
+      },
+      (error, result) => {
+        if (error) reject(error);
+        else resolve(result.secure_url);
+      }
+    );
+    stream.end(buffer);
+  });
+}
 
 // Runs Express-style middleware inside a Vercel serverless handler
 export function runMiddleware(req, res, fn) {

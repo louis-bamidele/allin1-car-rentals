@@ -1,5 +1,5 @@
 import { connectDB } from "../_lib/db.js";
-import { upload, runMiddleware } from "../_lib/upload.js";
+import { upload, runMiddleware, uploadToCloudinary } from "../_lib/upload.js";
 import { verifyAuth } from "../_lib/auth.js";
 import Car from "../_lib/models/Car.js";
 
@@ -60,11 +60,15 @@ export default async function handler(req, res) {
       const features   = (JSON.parse(req.body.features   || "[]")).filter((f) => f.trim());
       const highlights = (JSON.parse(req.body.highlights || "[]")).filter((h) => h.trim());
 
-      const photos = ["photo1", "photo2", "photo3", "photo4"].map(
-        (k) => req.files?.[k]?.[0]?.path
+      const fileEntries = ["photo1", "photo2", "photo3", "photo4"].map(
+        (k) => req.files?.[k]?.[0]
       );
-      if (photos.some((p) => !p))
+      if (fileEntries.some((f) => !f))
         return res.status(400).json({ message: "All 4 photos are required" });
+
+      const photos = await Promise.all(
+        fileEntries.map((f) => uploadToCloudinary(f.buffer))
+      );
 
       const slug = name.toLowerCase().trim().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
 

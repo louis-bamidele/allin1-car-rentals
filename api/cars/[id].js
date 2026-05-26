@@ -1,5 +1,5 @@
 import { connectDB } from "../_lib/db.js";
-import { upload, runMiddleware } from "../_lib/upload.js";
+import { upload, runMiddleware, uploadToCloudinary } from "../_lib/upload.js";
 import { verifyAuth } from "../_lib/auth.js";
 import Car from "../_lib/models/Car.js";
 
@@ -53,13 +53,15 @@ export default async function handler(req, res) {
       const features   = (JSON.parse(req.body.features   || "[]")).filter((f) => f.trim());
       const highlights = (JSON.parse(req.body.highlights || "[]")).filter((h) => h.trim());
 
-      const photos = ["photo1", "photo2", "photo3", "photo4"].map((k, i) => {
-        const file = req.files?.[k]?.[0];
-        if (file) return file.path;
-        const existing = req.body[`${k}_url`];
-        if (existing) return existing;
-        return car.gallery[i] || "";
-      });
+      const photos = await Promise.all(
+        ["photo1", "photo2", "photo3", "photo4"].map(async (k, i) => {
+          const file = req.files?.[k]?.[0];
+          if (file) return uploadToCloudinary(file.buffer);
+          const existing = req.body[`${k}_url`];
+          if (existing) return existing;
+          return car.gallery[i] || "";
+        })
+      );
 
       const slug = name.toLowerCase().trim().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
 
