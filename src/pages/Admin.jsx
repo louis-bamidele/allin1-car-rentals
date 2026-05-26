@@ -14,6 +14,56 @@ const PHOTO_LABELS = [
 
 const YEAR_RE = /^\d{4}(\s*-\s*\d{4})?$/;
 
+// Resize + re-encode an image in the browser before upload.
+// 1920px wide @ 92% JPEG is visually lossless and typically shrinks a 5 MB
+// phone photo to ~400 KB. Cloudinary downscales to 1200x750 anyway, so we're
+// not losing any displayed quality.
+async function compressImage(file, maxWidth = 1920, quality = 0.92) {
+  if (!file.type.startsWith("image/")) return file;
+  // Skip already-tiny files — compression overhead isn't worth it
+  if (file.size < 400 * 1024) return file;
+
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      let { width, height } = img;
+      if (width > maxWidth) {
+        height = Math.round((height * maxWidth) / width);
+        width = maxWidth;
+      }
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext("2d");
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = "high";
+      ctx.drawImage(img, 0, 0, width, height);
+      canvas.toBlob(
+        (blob) => {
+          if (!blob) return reject(new Error("Image compression failed"));
+          // If compression somehow made it bigger, keep the original
+          if (blob.size >= file.size) return resolve(file);
+          const compressed = new File(
+            [blob],
+            file.name.replace(/\.[^.]+$/, ".jpg"),
+            { type: "image/jpeg", lastModified: Date.now() }
+          );
+          resolve(compressed);
+        },
+        "image/jpeg",
+        quality
+      );
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error("Could not read image file"));
+    };
+    img.src = url;
+  });
+}
+
 const EMPTY_FORM = {
   name: "", category: "Economy", year: String(new Date().getFullYear()),
   color: "", seats: 5, doors: 5, transmission: "Automatic",
@@ -119,6 +169,7 @@ function CarForm({ token, editCar, onDone }) {
   const [fieldErrors, setFieldErrors] = useState({});
   const [success, setSuccess] = useState(false);
   const [yearError, setYearError] = useState("");
+  const [processing, setProcessing] = useState([false, false, false, false]);
   const fileRefs = [useRef(), useRef(), useRef(), useRef()];
 
   function set(key, val) {
@@ -136,13 +187,25 @@ function CarForm({ token, editCar, onDone }) {
     const highlights = [...form.highlights]; highlights[i] = val; set("highlights", highlights);
   }
 
-  function handlePhoto(i, file) {
+  async function handlePhoto(i, file) {
     if (!file) return;
-    const photos = [...form.photos];
-    const previews = [...form.previews];
-    photos[i] = file;
-    previews[i] = URL.createObjectURL(file);
-    setForm((f) => ({ ...f, photos, previews }));
+    setProcessing((p) => { const next = [...p]; next[i] = true; return next; });
+    try {
+      const compressed = await compressImage(file);
+      const previewUrl = URL.createObjectURL(compressed);
+      setForm((f) => {
+        const photos = [...f.photos];
+        const previews = [...f.previews];
+        photos[i] = compressed;
+        previews[i] = previewUrl;
+        return { ...f, photos, previews };
+      });
+    } catch (err) {
+      setError(`Could not process photo ${i + 1}: ${err.message}`);
+      if (fileRefs[i].current) fileRefs[i].current.value = "";
+    } finally {
+      setProcessing((p) => { const next = [...p]; next[i] = false; return next; });
+    }
   }
 
   function clearPhoto(i) {
@@ -157,6 +220,12 @@ function CarForm({ token, editCar, onDone }) {
   async function handleSubmit(e) {
     e.preventDefault();
     setError(""); setSuccess(false); setFieldErrors({});
+
+    // Don't submit while we're still compressing a photo
+    if (processing.some(Boolean)) {
+      setError("Please wait for photos to finish optimizing.");
+      return;
+    }
 
     // ── Client-side validation — collect all errors before touching the API ──
     const clientErrors = {};
@@ -385,6 +454,9 @@ function CarForm({ token, editCar, onDone }) {
       {/* Photos */}
       <div>
         <h3 className="text-xs font-bold uppercase tracking-widest text-navy-900/40 mb-1">Photos</h3>
+        <p className="text-xs text-slate-400 mb-1">
+          Photos are automatically optimized for faster uploads — quality is preserved.
+        </p>
         {isEdit && <p className="text-xs text-slate-500 mb-2">Existing photos are shown. Click a photo to replace it, or leave it to keep the current one.</p>}
         {(fieldErrors.image || fieldErrors.gallery) && (
           <p className="mb-3 text-xs text-red-600">{fieldErrors.image || fieldErrors.gallery}</p>
@@ -393,6 +465,7 @@ function CarForm({ token, editCar, onDone }) {
           {PHOTO_LABELS.map((label, i) => {
             const hasPreview = !!form.previews[i];
             const isNewFile = !!form.photos[i];
+            const isProcessing = processing[i];
             return (
               <div key={i} className="space-y-2">
                 <label className="block text-xs font-semibold text-navy-900/70">
@@ -408,16 +481,31 @@ function CarForm({ token, editCar, onDone }) {
                       className="absolute top-2 right-2 bg-black/60 hover:bg-black/80 text-white rounded-full w-7 h-7 flex items-center justify-center text-sm font-bold transition">
                       ×
                     </button>
+                    {isProcessing && (
+                      <div className="absolute inset-0 bg-navy-950/60 backdrop-blur-sm flex flex-col items-center justify-center gap-2">
+                        <div className="w-7 h-7 rounded-full border-3 border-white/30 border-t-gold-400 animate-spin" />
+                        <span className="text-xs text-white font-semibold">Optimizing…</span>
+                      </div>
+                    )}
                   </div>
                 ) : (
-                  <label className="flex flex-col items-center justify-center aspect-[16/10] rounded-xl border-2 border-dashed border-navy-200 bg-cream-50 hover:border-gold-500 hover:bg-cream-100 cursor-pointer transition">
-                    <span className="text-3xl text-navy-300">+</span>
-                    <span className="text-xs text-navy-400 mt-1">Click to upload</span>
-                    <input ref={fileRefs[i]} type="file" accept="image/*" className="hidden"
+                  <label className={`relative flex flex-col items-center justify-center aspect-[16/10] rounded-xl border-2 border-dashed bg-cream-50 transition ${isProcessing ? "border-gold-500 cursor-wait" : "border-navy-200 hover:border-gold-500 hover:bg-cream-100 cursor-pointer"}`}>
+                    {isProcessing ? (
+                      <>
+                        <div className="w-7 h-7 rounded-full border-3 border-navy-100 border-t-gold-500 animate-spin" />
+                        <span className="text-xs text-navy-400 mt-2 font-semibold">Optimizing…</span>
+                      </>
+                    ) : (
+                      <>
+                        <span className="text-3xl text-navy-300">+</span>
+                        <span className="text-xs text-navy-400 mt-1">Click to upload</span>
+                      </>
+                    )}
+                    <input ref={fileRefs[i]} type="file" accept="image/*" className="hidden" disabled={isProcessing}
                       onChange={(e) => handlePhoto(i, e.target.files[0])} />
                   </label>
                 )}
-                {hasPreview && (
+                {hasPreview && !isProcessing && (
                   <label className="block text-center text-xs text-gold-600 cursor-pointer hover:underline">
                     Replace photo
                     <input ref={fileRefs[i]} type="file" accept="image/*" className="hidden"
