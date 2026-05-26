@@ -212,7 +212,8 @@ function CarForm({ token, editCar, onDone }) {
         setForm(EMPTY_FORM);
         fileRefs.forEach((r) => { if (r.current) r.current.value = ""; });
       }
-      onDone();
+      // Show success banner briefly before navigating away
+      setTimeout(() => onDone(), 1500);
     } catch (err) {
       setError(err.message);
       if (err.fieldErrors) setFieldErrors(err.fieldErrors);
@@ -223,6 +224,21 @@ function CarForm({ token, editCar, onDone }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
+      {/* Full-screen loading overlay — shown while photos are uploading */}
+      {loading && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-navy-950/60 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl shadow-2xl px-8 py-8 flex flex-col items-center gap-4 max-w-xs w-full mx-4">
+            <div className="w-12 h-12 rounded-full border-4 border-navy-100 border-t-gold-500 animate-spin" />
+            <p className="font-semibold text-navy-900 text-center text-sm">
+              {isEdit ? "Saving changes…" : "Uploading photos and saving car…"}
+            </p>
+            <p className="text-xs text-slate-400 text-center leading-relaxed">
+              Photos are being uploaded to the server.<br />Please wait and do not close this tab.
+            </p>
+          </div>
+        </div>
+      )}
+
       {error && <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl px-4 py-3">{error}</div>}
       {success && <div className="bg-green-50 border border-green-200 text-green-700 text-sm rounded-xl px-4 py-3">{isEdit ? "Car updated successfully." : "Car added successfully."}</div>}
 

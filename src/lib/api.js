@@ -37,8 +37,25 @@ export const login = (email, password) =>
     body: JSON.stringify({ email, password }),
   });
 
+// Shared helper: fetch with a hard timeout so the form never hangs forever.
+// Photos go through Cloudinary on the server — allow 2 minutes.
+function fetchWithTimeout(url, opts = {}, ms = 120_000) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), ms);
+  return fetch(url, { ...opts, signal: controller.signal })
+    .then((res) => { clearTimeout(timer); return res; })
+    .catch((err) => {
+      clearTimeout(timer);
+      if (err.name === "AbortError")
+        throw new Error("The upload timed out. Check your connection and try again.");
+      if (err.message === "Failed to fetch" || err instanceof TypeError)
+        throw new Error("Could not reach the server. Check your connection and try again.");
+      throw err;
+    });
+}
+
 export const addCar = (formData, token) =>
-  fetch(`${BASE}/api/cars`, {
+  fetchWithTimeout(`${BASE}/api/cars`, {
     method: "POST",
     headers: { Authorization: `Bearer ${token}` },
     body: formData,
@@ -54,7 +71,7 @@ export const addCar = (formData, token) =>
   });
 
 export const updateCar = (id, formData, token) =>
-  fetch(`${BASE}/api/cars/${id}`, {
+  fetchWithTimeout(`${BASE}/api/cars/${id}`, {
     method: "PUT",
     headers: { Authorization: `Bearer ${token}` },
     body: formData,
