@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { login, getAdminCars, addCar, updateCar, deleteCar, toggleAvailability, setUnauthorizedHandler } from "../lib/api";
+import { login, getAdminCars, getCar, addCar, updateCar, deleteCar, toggleAvailability, setUnauthorizedHandler } from "../lib/api";
 
 const CATEGORIES = ["Economy", "Comfort", "SUV"];
 const TRANSMISSIONS = ["Automatic", "Manual"];
@@ -119,19 +119,37 @@ const EMPTY_FORM = {
   existingUrls: ["", "", "", ""],
 };
 
+// Pad/truncate an array to a fixed length, filling new slots with `fill`.
+// Ensures the edit form always shows the same number of input slots as the
+// add form even if the saved car has fewer features/highlights/photos.
+function padArray(arr, length, fill = "") {
+  const result = Array.isArray(arr) ? [...arr] : [];
+  while (result.length < length) result.push(fill);
+  return result.slice(0, length);
+}
+
 function carToForm(car) {
   return {
-    name: car.name, category: car.category, year: car.year,
-    color: car.color, seats: car.seats, doors: car.doors,
-    transmission: car.transmission, fuel: car.fuel, consumption: car.consumption,
-    bags: car.bags, dailyRate: car.dailyRate, weeklyRate: car.weeklyRate,
-    monthlyRate: car.monthlyRate, description: car.description,
-    longDescription: car.longDescription,
-    features: [...(car.features || ["", "", "", "", "", "", "", ""])],
-    highlights: [...(car.highlights || ["", "", ""])],
+    name: car.name || "",
+    category: car.category || "Economy",
+    year: car.year || "",
+    color: car.color || "",
+    seats: car.seats ?? 5,
+    doors: car.doors ?? 5,
+    transmission: car.transmission || "Automatic",
+    fuel: car.fuel || "Petrol",
+    consumption: car.consumption || "",
+    bags: car.bags ?? 2,
+    dailyRate: car.dailyRate ?? "",
+    weeklyRate: car.weeklyRate ?? "",
+    monthlyRate: car.monthlyRate ?? "",
+    description: car.description || "",
+    longDescription: car.longDescription || "",
+    features: padArray(car.features, 8),
+    highlights: padArray(car.highlights, 3),
     photos: [null, null, null, null],
-    previews: [...(car.gallery || ["", "", "", ""])],
-    existingUrls: [...(car.gallery || ["", "", "", ""])],
+    previews: padArray(car.gallery, 4),
+    existingUrls: padArray(car.gallery, 4),
   };
 }
 
@@ -584,6 +602,7 @@ function Dashboard({ token, onLogout }) {
   const [deleteId, setDeleteId] = useState(null);
   const [deleting, setDeleting] = useState(false);
   const [togglingId, setTogglingId] = useState(null);
+  const [loadingEditId, setLoadingEditId] = useState(null);
   const [tab, setTab] = useState("fleet");
   const [editCar, setEditCar] = useState(null);
 
@@ -620,10 +639,21 @@ function Dashboard({ token, onLogout }) {
     }
   }
 
-  function openEdit(car) {
-    setEditCar(car);
-    setTab("edit");
-    window.scrollTo({ top: 0, behavior: "smooth" });
+  async function openEdit(car) {
+    // The list endpoint returns a lean version of each car (no longDescription,
+    // features, highlights, or gallery). Refetch the full record by _id so the
+    // edit form is pre-populated with every field — including the photos.
+    setLoadingEditId(car._id);
+    try {
+      const fullCar = await getCar(car._id);
+      setEditCar(fullCar);
+      setTab("edit");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch (err) {
+      alert(`Could not load car details: ${err.message}`);
+    } finally {
+      setLoadingEditId(null);
+    }
   }
 
   return (
@@ -672,6 +702,7 @@ function Dashboard({ token, onLogout }) {
                 {cars.map((car) => {
                   const isAvailable = car.available !== false;
                   const isToggling = togglingId === car._id;
+                  const isLoadingEdit = loadingEditId === car._id;
                   return (
                     <div key={car._id} className={`bg-white rounded-2xl shadow-card overflow-hidden transition ${!isAvailable ? "opacity-60" : ""}`}>
                       <div className="aspect-[16/10] bg-cream-100 relative">
@@ -705,12 +736,12 @@ function Dashboard({ token, onLogout }) {
                         </button>
 
                         <div className="mt-2 flex gap-2">
-                          <button onClick={() => openEdit(car)}
-                            className="flex-1 text-sm text-navy-900 border border-navy-200 hover:bg-navy-50 rounded-xl py-1.5 transition font-medium">
-                            Edit
+                          <button onClick={() => openEdit(car)} disabled={isLoadingEdit || !!loadingEditId}
+                            className="flex-1 text-sm text-navy-900 border border-navy-200 hover:bg-navy-50 rounded-xl py-1.5 transition font-medium disabled:opacity-50 disabled:cursor-wait">
+                            {isLoadingEdit ? "Loading…" : "Edit"}
                           </button>
-                          <button onClick={() => setDeleteId(car._id)}
-                            className="flex-1 text-sm text-red-600 border border-red-200 hover:bg-red-50 rounded-xl py-1.5 transition font-medium">
+                          <button onClick={() => setDeleteId(car._id)} disabled={!!loadingEditId}
+                            className="flex-1 text-sm text-red-600 border border-red-200 hover:bg-red-50 rounded-xl py-1.5 transition font-medium disabled:opacity-50">
                             Delete
                           </button>
                         </div>

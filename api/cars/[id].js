@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { connectDB } from "../_lib/db.js";
 import { upload, runMiddleware, uploadToCloudinary } from "../_lib/upload.js";
 import { verifyAuth } from "../_lib/auth.js";
@@ -19,10 +20,19 @@ export default async function handler(req, res) {
   await connectDB();
   const { id } = req.query;
 
-  // GET /api/cars/:id — find by slug, public
+  // GET /api/cars/:id — find by MongoDB _id OR slug, public
+  // Admins fetching the full record for the edit form pass _id; the public
+  // car detail page passes slug. We try _id first if the value looks like
+  // a valid ObjectId, then fall back to slug.
   if (req.method === "GET") {
     try {
-      const car = await Car.findOne({ slug: id });
+      let car = null;
+      if (mongoose.Types.ObjectId.isValid(id)) {
+        car = await Car.findById(id);
+      }
+      if (!car) {
+        car = await Car.findOne({ slug: id });
+      }
       if (!car) return res.status(404).json({ message: "Car not found" });
       return res.json(car);
     } catch {
