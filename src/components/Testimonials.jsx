@@ -15,12 +15,13 @@ export default function Testimonials() {
           </h2>
         </Reveal>
         <Reveal variants={stagger} className="mt-8 md:mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
-          {t.testimonials.reviews.map((r) => (
+          {t.testimonials.reviews.map((r, i) => (
             <motion.figure
               key={r.name}
               variants={fadeUp}
               whileHover={{ y: -4 }}
-              className="card"
+              // Mobile/tablet show the first 3 reviews; desktop shows all 6.
+              className={`card ${i >= 3 ? "hidden lg:block" : ""}`}
             >
               <div className="flex gap-1 text-gold-500">
                 {Array.from({ length: 5 }).map((_, i) => (
