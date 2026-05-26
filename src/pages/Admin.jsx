@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { login, getAdminCars, addCar, updateCar, deleteCar, toggleAvailability } from "../lib/api";
+import { login, getAdminCars, addCar, updateCar, deleteCar, toggleAvailability, setUnauthorizedHandler } from "../lib/api";
 
 const CATEGORIES = ["Economy", "Comfort", "SUV"];
 const TRANSMISSIONS = ["Automatic", "Manual"];
@@ -158,8 +158,30 @@ function CarForm({ token, editCar, onDone }) {
     e.preventDefault();
     setError(""); setSuccess(false); setFieldErrors({});
 
-    if (!isEdit && form.photos.some((p) => !p)) {
-      setError("Please select all 4 photos before submitting."); return;
+    // ── Client-side validation — collect all errors before touching the API ──
+    const clientErrors = {};
+
+    if (!form.description.trim())
+      clientErrors.description = "Short description is required.";
+    if (!form.longDescription.trim())
+      clientErrors.longDescription = "Full description is required.";
+
+    const filledFeatures = form.features.filter((f) => f.trim() !== "");
+    if (filledFeatures.length < 3)
+      clientErrors.features = `At least 3 features are required (${filledFeatures.length} filled in so far).`;
+
+    const filledHighlights = form.highlights.filter((h) => h.trim() !== "");
+    if (filledHighlights.length < 1)
+      clientErrors.highlights = "At least 1 highlight is required.";
+
+    if (!isEdit && form.photos.some((p) => !p))
+      clientErrors._photos = "Please select all 4 photos before submitting.";
+
+    if (Object.keys(clientErrors).length > 0) {
+      const { _photos, ...fieldErrs } = clientErrors;
+      setFieldErrors(fieldErrs);
+      setError(_photos || "Please fix the errors below before submitting.");
+      return;
     }
 
     setLoading(true);
@@ -301,10 +323,10 @@ function CarForm({ token, editCar, onDone }) {
       <div>
         <h3 className="text-xs font-bold uppercase tracking-widest text-navy-900/40 mb-4">Descriptions</h3>
         <div className="space-y-4">
-          <Field label="Short Description (1-2 sentences)" error={fieldErrors.description}>
+          <Field label="Short Description (1-2 sentences)" required error={fieldErrors.description}>
             <input className={`${inputCls} ${fieldErrors.description ? "border-red-400 focus:border-red-400 focus:ring-red-400/20" : ""}`} value={form.description} onChange={(e) => set("description", e.target.value)} placeholder="Compact and fuel friendly…" />
           </Field>
-          <Field label="Full Description (2-3 sentences)" error={fieldErrors.longDescription}>
+          <Field label="Full Description (2-3 sentences)" required error={fieldErrors.longDescription}>
             <textarea rows={4} className={`${inputCls} ${fieldErrors.longDescription ? "border-red-400 focus:border-red-400 focus:ring-red-400/20" : ""}`} value={form.longDescription} onChange={(e) => set("longDescription", e.target.value)} placeholder="Describe the driving experience, who it suits, standout features…" />
           </Field>
         </div>
@@ -313,7 +335,10 @@ function CarForm({ token, editCar, onDone }) {
       {/* Features */}
       <div>
         <h3 className="text-xs font-bold uppercase tracking-widest text-navy-900/40 mb-1">Features</h3>
-        <p className="text-xs text-slate-400 mb-4">Fill in as many as apply. Empty fields are ignored.</p>
+        <p className="text-xs text-slate-400 mb-1">Minimum 3 required. Empty fields are ignored.</p>
+        {fieldErrors.features && (
+          <p className="mb-3 text-xs text-red-600 font-medium">{fieldErrors.features}</p>
+        )}
         <div className="grid sm:grid-cols-2 gap-3">
           {form.features.map((f, i) => (
             <Field key={i} label={`Feature ${i + 1}`}>
@@ -327,7 +352,10 @@ function CarForm({ token, editCar, onDone }) {
       {/* Highlights */}
       <div>
         <h3 className="text-xs font-bold uppercase tracking-widest text-navy-900/40 mb-1">Highlights</h3>
-        <p className="text-xs text-slate-400 mb-4">Short selling points shown on the car detail page. Fill what you have.</p>
+        <p className="text-xs text-slate-400 mb-1">Minimum 1 required. Short selling points shown on the car detail page.</p>
+        {fieldErrors.highlights && (
+          <p className="mb-3 text-xs text-red-600 font-medium">{fieldErrors.highlights}</p>
+        )}
         <div className="grid sm:grid-cols-3 gap-4">
           {form.highlights.map((h, i) => (
             <Field key={i} label={`Highlight ${i + 1}`}>
@@ -602,6 +630,12 @@ export default function Admin() {
     localStorage.removeItem("admin_token");
     setToken(null);
   }
+
+  // Register the global 401 handler so any expired/invalid token auto-logs out
+  useEffect(() => {
+    setUnauthorizedHandler(handleLogout);
+    return () => setUnauthorizedHandler(null);
+  }, []);
 
   if (!token) return <LoginScreen onLogin={setToken} />;
   return <Dashboard token={token} onLogout={handleLogout} />;

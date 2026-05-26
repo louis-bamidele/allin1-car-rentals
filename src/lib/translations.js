@@ -24,7 +24,7 @@ export const translations = {
       eyebrow: "Your Key to a Rental Car",
       heading: "Drive Curaçao your way",
       headingAccent: "with All in 1.",
-      body: "Premium, reliable vehicles ready for daily, weekly, and long term rentals. Book in a few minutes and get on the road with a clean, checked car.",
+      body: "Reliable, well-maintained vehicles ready for daily, weekly, and long-term rentals. Book in a few minutes and get on the road with a clean, checked car.",
       highlights: [
         "Free airport delivery",
         "All in pricing, no surprise fees",
@@ -567,7 +567,7 @@ export const translations = {
       eyebrow: "Tu Llave para un Auto de Alquiler",
       heading: "Recorre Curaçao a tu manera",
       headingAccent: "con All in 1.",
-      body: "Vehículos premium y confiables disponibles para alquileres diarios, semanales y a largo plazo. Reserva en minutos y sal a la carretera con un auto limpio y revisado.",
+      body: "Vehículos confiables y bien mantenidos disponibles para alquileres diarios, semanales y a largo plazo. Reserva en minutos y sal a la carretera con un auto limpio y revisado.",
       highlights: [
         "Entrega gratuita en el aeropuerto",
         "Precio todo incluido, sin cargos sorpresa",
@@ -1111,7 +1111,7 @@ export const translations = {
       eyebrow: "Jouw Sleutel tot een Huurauto",
       heading: "Rijd Curaçao op jouw manier",
       headingAccent: "met All in 1.",
-      body: "Premium, betrouwbare voertuigen voor dagelijkse, wekelijkse en langdurige verhuur. Boek in enkele minuten en rij weg in een schone, gecontroleerde auto.",
+      body: "Betrouwbare, goed onderhouden voertuigen voor dagelijkse, wekelijkse en langdurige verhuur. Boek in enkele minuten en rij weg in een schone, gecontroleerde auto.",
       highlights: [
         "Gratis luchthavenbezorging",
         "Alles-in-prijzen, geen verrassingen",

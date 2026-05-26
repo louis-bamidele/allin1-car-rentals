@@ -1,8 +1,18 @@
 const BASE = import.meta.env.VITE_API_URL || "";
 
+// Called by Admin.jsx to register a logout handler triggered on 401
+let _onUnauthorized = null;
+export function setUnauthorizedHandler(fn) { _onUnauthorized = fn; }
+
+function handleUnauthorized(message) {
+  if (_onUnauthorized) _onUnauthorized();
+  throw new Error(message || "Session expired. Please sign in again.");
+}
+
 async function apiFetch(path, opts = {}) {
   const res = await fetch(`${BASE}${path}`, opts);
-  const data = await res.json();
+  const data = await res.json().catch(() => ({}));
+  if (res.status === 401) handleUnauthorized(data.message);
   if (!res.ok) throw new Error(data.message || "Request failed");
   return data;
 }
@@ -33,7 +43,8 @@ export const addCar = (formData, token) =>
     headers: { Authorization: `Bearer ${token}` },
     body: formData,
   }).then(async (res) => {
-    const data = await res.json();
+    const data = await res.json().catch(() => ({}));
+    if (res.status === 401) handleUnauthorized(data.message);
     if (!res.ok) {
       const err = new Error(data.message || "Failed to add car");
       if (data.fieldErrors) err.fieldErrors = data.fieldErrors;
@@ -48,7 +59,8 @@ export const updateCar = (id, formData, token) =>
     headers: { Authorization: `Bearer ${token}` },
     body: formData,
   }).then(async (res) => {
-    const data = await res.json();
+    const data = await res.json().catch(() => ({}));
+    if (res.status === 401) handleUnauthorized(data.message);
     if (!res.ok) {
       const err = new Error(data.message || "Failed to update car");
       if (data.fieldErrors) err.fieldErrors = data.fieldErrors;

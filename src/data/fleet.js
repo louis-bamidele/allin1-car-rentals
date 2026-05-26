@@ -109,7 +109,7 @@ export const fleet = [
       "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1200&q=80",
     ],
     description:
-      "Premium drive with the height and space of a true SUV.",
+      "The height and space of a true SUV, built for a comfortable island drive.",
     longDescription:
       "The Kia Sportage gives you a confident view of the road and a comfortable ride for the whole group. With four full size bags of luggage capacity, a smooth automatic, and modern driver assists, it is a great pick for families, surfers, and groups exploring beyond the city.",
     features: [
@@ -125,7 +125,7 @@ export const fleet = [
     highlights: [
       "Roomy for five with luggage",
       "Higher driving position",
-      "Premium feel inside",
+      "Refined interior feel",
     ],
   },
   {
