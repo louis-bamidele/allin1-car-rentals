@@ -14,19 +14,19 @@ const PHOTO_LABELS = [
 
 const YEAR_RE = /^\d{4}(\s*-\s*\d{4})?$/;
 
-// Resize + re-encode an image in the browser before upload.
-// 1920px wide @ 92% JPEG is visually lossless and typically shrinks a 5 MB
-// phone photo to ~400 KB. Cloudinary downscales to 1200x750 anyway, so we're
-// not losing any displayed quality.
-async function compressImage(file, maxWidth = 1920, quality = 0.92) {
-  if (!file.type.startsWith("image/")) return file;
-  // Skip already-tiny files — compression overhead isn't worth it
-  if (file.size < 400 * 1024) return file;
-
+// One-shot canvas resize + JPEG encode
+function _encodeOnce(file, maxWidth, quality) {
   return new Promise((resolve, reject) => {
     const url = URL.createObjectURL(file);
     const img = new Image();
+    // Hard timeout — if the browser can't decode the image format (e.g. HEIC
+    // on older Chrome) onload may never fire and we'd hang forever.
+    const decodeTimer = setTimeout(() => {
+      URL.revokeObjectURL(url);
+      reject(new Error("Image decode timed out — try a JPEG or PNG version"));
+    }, 15_000);
     img.onload = () => {
+      clearTimeout(decodeTimer);
       URL.revokeObjectURL(url);
       let { width, height } = img;
       if (width > maxWidth) {
@@ -37,14 +37,13 @@ async function compressImage(file, maxWidth = 1920, quality = 0.92) {
       canvas.width = width;
       canvas.height = height;
       const ctx = canvas.getContext("2d");
+      if (!ctx) return reject(new Error("Canvas not supported by this browser"));
       ctx.imageSmoothingEnabled = true;
       ctx.imageSmoothingQuality = "high";
       ctx.drawImage(img, 0, 0, width, height);
       canvas.toBlob(
         (blob) => {
-          if (!blob) return reject(new Error("Image compression failed"));
-          // If compression somehow made it bigger, keep the original
-          if (blob.size >= file.size) return resolve(file);
+          if (!blob) return reject(new Error("toBlob returned null"));
           const compressed = new File(
             [blob],
             file.name.replace(/\.[^.]+$/, ".jpg"),
@@ -57,11 +56,54 @@ async function compressImage(file, maxWidth = 1920, quality = 0.92) {
       );
     };
     img.onerror = () => {
+      clearTimeout(decodeTimer);
       URL.revokeObjectURL(url);
-      reject(new Error("Could not read image file"));
+      reject(new Error("Could not decode image (format may be unsupported — try JPEG)"));
     };
     img.src = url;
   });
+}
+
+// Resize + re-encode an image in the browser before upload.
+// Iteratively tries lower JPEG qualities until the result is under ~1 MB, so
+// even very high-resolution photos end up small enough to upload quickly.
+// Cloudinary downscales to 1200×750 anyway, so 1920 px source is plenty.
+async function compressImage(file, opts = {}) {
+  const { maxWidth = 1920, targetBytes = 1_000_000 } = opts;
+  if (!file.type.startsWith("image/")) return file;
+  if (file.size < 400 * 1024) {
+    console.log(`[compress] ${file.name}: ${(file.size / 1024).toFixed(0)} KB — skipping (already small)`);
+    return file;
+  }
+
+  const original = file.size;
+  console.log(`[compress] ${file.name}: starting, original ${(original / 1024).toFixed(0)} KB`);
+
+  // Try progressively lower quality until we hit the size target. Stops at
+  // the first acceptable size or the lowest quality, whichever comes first.
+  const qualitySteps = [0.92, 0.85, 0.78, 0.70];
+  let best = null;
+  for (const q of qualitySteps) {
+    try {
+      const result = await _encodeOnce(file, maxWidth, q);
+      console.log(`[compress] ${file.name}: q=${q} → ${(result.size / 1024).toFixed(0)} KB`);
+      best = result;
+      if (result.size <= targetBytes) break;
+    } catch (err) {
+      console.warn(`[compress] ${file.name}: encode failed at q=${q}:`, err.message);
+      // If the first attempt failed, the browser/format is unsupported — give up
+      if (best === null) throw err;
+      break;
+    }
+  }
+
+  // If compression somehow made it bigger or never produced output, use original
+  if (!best || best.size >= original) {
+    console.log(`[compress] ${file.name}: keeping original (compression didn't help)`);
+    return file;
+  }
+  console.log(`[compress] ${file.name}: final ${(best.size / 1024).toFixed(0)} KB (${((1 - best.size / original) * 100).toFixed(0)}% smaller)`);
+  return best;
 }
 
 const EMPTY_FORM = {
