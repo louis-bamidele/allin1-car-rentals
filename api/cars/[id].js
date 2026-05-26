@@ -5,6 +5,8 @@ import Car from "../_lib/models/Car.js";
 
 // Disable Vercel's body parser so multer can read the multipart stream
 export const config = { api: { bodyParser: false } };
+// Allow up to 60 s for the whole request — Cloudinary uploads can take a moment
+export const maxDuration = 60;
 
 const photoFields = upload.fields([
   { name: "photo1", maxCount: 1 },
@@ -53,6 +55,14 @@ export default async function handler(req, res) {
       const features   = (JSON.parse(req.body.features   || "[]")).filter((f) => f.trim());
       const highlights = (JSON.parse(req.body.highlights || "[]")).filter((h) => h.trim());
 
+      const newFiles = ["photo1", "photo2", "photo3", "photo4"]
+        .map((k) => req.files?.[k]?.[0])
+        .filter(Boolean);
+      if (newFiles.length > 0) {
+        const totalBytes = newFiles.reduce((sum, f) => sum + f.size, 0);
+        console.log(`[PUT /api/cars/${id}] re-uploading ${newFiles.length} photo(s), ${(totalBytes / 1024).toFixed(0)} KB total`);
+      }
+      const tUpload = Date.now();
       const photos = await Promise.all(
         ["photo1", "photo2", "photo3", "photo4"].map(async (k, i) => {
           const file = req.files?.[k]?.[0];
@@ -62,6 +72,7 @@ export default async function handler(req, res) {
           return car.gallery[i] || "";
         })
       );
+      console.log(`[PUT /api/cars/${id}] photo step finished in ${Date.now() - tUpload}ms`);
 
       const slug = name.toLowerCase().trim().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
 

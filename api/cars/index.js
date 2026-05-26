@@ -5,6 +5,9 @@ import Car from "../_lib/models/Car.js";
 
 // Disable Vercel's body parser so multer can read the multipart stream
 export const config = { api: { bodyParser: false } };
+// Allow up to 60 s for the whole request — Cloudinary uploads can take a moment
+// (Vercel Hobby cap is 10 s; Pro default 60 s; Pro+config up to 300 s)
+export const maxDuration = 60;
 
 const photoFields = upload.fields([
   { name: "photo1", maxCount: 1 },
@@ -40,11 +43,13 @@ export default async function handler(req, res) {
     const user = await verifyAuth(req, res);
     if (!user) return;
 
+    const t0 = Date.now();
     try {
       await runMiddleware(req, res, photoFields);
     } catch (err) {
       return res.status(400).json({ message: `Photo upload failed: ${err.message}` });
     }
+    console.log(`[POST /api/cars] multer parsed body in ${Date.now() - t0}ms`);
 
     try {
       const {
@@ -66,9 +71,13 @@ export default async function handler(req, res) {
       if (fileEntries.some((f) => !f))
         return res.status(400).json({ message: "All 4 photos are required" });
 
+      const totalBytes = fileEntries.reduce((sum, f) => sum + f.size, 0);
+      console.log(`[POST /api/cars] uploading 4 photos, ${(totalBytes / 1024).toFixed(0)} KB total`);
+      const tUpload = Date.now();
       const photos = await Promise.all(
         fileEntries.map((f) => uploadToCloudinary(f.buffer))
       );
+      console.log(`[POST /api/cars] Cloudinary upload finished in ${Date.now() - tUpload}ms`);
 
       const slug = name.toLowerCase().trim().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
 
