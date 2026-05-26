@@ -157,7 +157,7 @@ export const translations = {
           name: "David B.",
           trip: "Arrived after midnight",
           quote:
-            "Our connecting flight from Atlanta got delayed twice and we landed close to 1 AM with two tired kids. I'd basically given up — figured we'd be sleeping in the terminal. Sent them a WhatsApp before take-off as a hail mary, and they were waiting outside arrivals when we walked out. Twenty minutes door to door. Still can't quite believe how that went.",
+            "Our connecting flight from Atlanta got delayed twice and we landed close to 1 AM with two tired kids. I'd basically given up. Figured we'd be sleeping in the terminal. Sent them a WhatsApp before take-off as a hail mary, and they were waiting outside arrivals when we walked out. Twenty minutes door to door. Still can't quite believe how that went.",
         },
         {
           name: "Anna T.",
@@ -169,7 +169,7 @@ export const translations = {
           name: "Carlos M.",
           trip: "Switched after a bad rental",
           quote:
-            "Last year a big-name company hit me with a 380 USD charge at drop-off for \"damage\" that was already on the car when I picked it up. This trip I went with All in 1 on a friend's recommendation. They literally took photos with me at pickup AND drop-off — no surprises, no extra charges, no drama. Wish I'd found them on the first trip.",
+            "Last year a big-name company hit me with a 380 USD charge at drop-off for \"damage\" that was already on the car when I picked it up. This trip I went with All in 1 on a friend's recommendation. They literally took photos with me at pickup AND drop-off. No surprises, no extra charges, no drama. Wish I'd found them on the first trip.",
         },
       ],
     },
@@ -959,7 +959,7 @@ export const translations = {
           name: "David B.",
           trip: "Llegada pasada la medianoche",
           quote:
-            "El vuelo de conexión desde Atlanta se retrasó dos veces y aterrizamos cerca de la 1 de la madrugada con dos niños agotados. Básicamente ya me había rendido — pensaba que íbamos a dormir en la terminal. Les mandé un WhatsApp antes del despegue como último recurso, y estaban esperando afuera de llegadas cuando salimos. Veinte minutos puerta a puerta. Todavía no me lo creo del todo.",
+            "El vuelo de conexión desde Atlanta se retrasó dos veces y aterrizamos cerca de la 1 de la madrugada con dos niños agotados. Básicamente ya me había rendido. Pensaba que íbamos a dormir en la terminal. Les mandé un WhatsApp antes del despegue como último recurso, y estaban esperando afuera de llegadas cuando salimos. Veinte minutos puerta a puerta. Todavía no me lo creo del todo.",
         },
         {
           name: "Anna T.",
@@ -971,7 +971,7 @@ export const translations = {
           name: "Carlos M.",
           trip: "Cambié después de una mala experiencia",
           quote:
-            "El año pasado una compañía grande me cobró 380 USD al devolver el auto por \"daños\" que ya estaban cuando lo recogí. Este viaje fui con All in 1 por recomendación de un amigo. Literalmente sacaron fotos conmigo al recoger y al devolver — sin sorpresas, sin cobros extra, sin drama. Ojalá los hubiera encontrado en el primer viaje.",
+            "El año pasado una compañía grande me cobró 380 USD al devolver el auto por \"daños\" que ya estaban cuando lo recogí. Este viaje fui con All in 1 por recomendación de un amigo. Literalmente sacaron fotos conmigo al recoger y al devolver. Sin sorpresas, sin cobros extra, sin drama. Ojalá los hubiera encontrado en el primer viaje.",
         },
       ],
     },
@@ -1763,7 +1763,7 @@ export const translations = {
           name: "David B.",
           trip: "Aangekomen na middernacht",
           quote:
-            "Onze overstap vanuit Atlanta werd twee keer vertraagd en we landden uiteindelijk rond 1 uur 's nachts met twee uitgeputte kinderen. Ik had het eigenlijk opgegeven — dacht echt dat we de nacht in de terminal zouden doorbrengen. Stuurde ze nog een WhatsApp vóór vertrek als laatste redmiddel, en ze stonden buiten bij aankomst toen we naar buiten liepen. Twintig minuten van deur tot deur. Snap nog steeds niet helemaal hoe ze dat voor elkaar kregen.",
+            "Onze overstap vanuit Atlanta werd twee keer vertraagd en we landden uiteindelijk rond 1 uur 's nachts met twee uitgeputte kinderen. Ik had het eigenlijk opgegeven. Dacht echt dat we de nacht in de terminal zouden doorbrengen. Stuurde ze nog een WhatsApp vóór vertrek als laatste redmiddel, en ze stonden buiten bij aankomst toen we naar buiten liepen. Twintig minuten van deur tot deur. Snap nog steeds niet helemaal hoe ze dat voor elkaar kregen.",
         },
         {
           name: "Anna T.",
@@ -1775,7 +1775,7 @@ export const translations = {
           name: "Carlos M.",
           trip: "Overgestapt na een slechte ervaring",
           quote:
-            "Vorig jaar rekende een grote naam mij 380 USD bij teruggave voor \"schade\" die er al op zat toen ik de auto kreeg. Deze keer ben ik met All in 1 in zee gegaan, op aanraden van een vriend. Ze maakten letterlijk samen met mij foto's bij ophalen én teruggeven — geen verrassingen, geen extra kosten, geen gedoe. Had ze tijdens mijn eerste reis al moeten vinden.",
+            "Vorig jaar rekende een grote naam mij 380 USD bij teruggave voor \"schade\" die er al op zat toen ik de auto kreeg. Deze keer ben ik met All in 1 in zee gegaan, op aanraden van een vriend. Ze maakten letterlijk samen met mij foto's bij ophalen én teruggeven. Geen verrassingen, geen extra kosten, geen gedoe. Had ze tijdens mijn eerste reis al moeten vinden.",
         },
       ],
     },
