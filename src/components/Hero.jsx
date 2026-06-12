@@ -21,14 +21,19 @@ export default function Hero() {
       id="home"
       className="relative pt-14 sm:pt-20 lg:pt-28 pb-14 sm:pb-20 lg:pb-28 overflow-hidden"
     >
-      <motion.div
+      <motion.img
+        src="/images/curacao.webp"
+        alt=""
+        aria-hidden="true"
+        // Largest Contentful Paint candidate — load with high priority
+        fetchPriority="high"
+        decoding="async"
+        width="1344"
+        height="896"
+        className="absolute inset-0 w-full h-full object-cover object-center"
         initial={{ scale: 1.08, opacity: 0.6 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 1.2, ease: "easeOut" }}
-        className="absolute inset-0 bg-cover bg-center"
-        style={{
-          backgroundImage: "url('/images/curacao.png')",
-        }}
       />
       <div className="absolute inset-0 bg-hero-gradient" />
       <div className="absolute -top-20 -left-20 w-80 h-80 rounded-full bg-gold-500/10 blur-3xl" />

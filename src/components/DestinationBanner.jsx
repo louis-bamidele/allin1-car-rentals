@@ -10,11 +10,13 @@ export default function DestinationBanner() {
     <section className="relative overflow-hidden bg-navy-950 h-screen">
       {/* Background — landscape photo */}
       <motion.img
-        src="/images/curacao-wide.png?v=3"
+        src="/images/curacao-wide.webp"
         alt="Willemstad waterfront, Curaçao"
         className="absolute inset-0 w-full h-full object-cover object-center"
         fetchPriority="high"
         decoding="async"
+        width="1672"
+        height="941"
         initial={{ scale: 1.06 }}
         animate={{ scale: 1 }}
         transition={{ duration: 1.6, ease: "easeOut" }}

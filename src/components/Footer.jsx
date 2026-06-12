@@ -9,10 +9,15 @@ export default function Footer() {
       <div className="container-x py-12 md:py-14 grid sm:grid-cols-2 md:grid-cols-12 gap-8 md:gap-10">
         <div className="sm:col-span-2 md:col-span-4">
           <img
-            src="/logo.png"
+            src="/logo.webp"
             alt="All in 1 Car Rentals"
             className="h-16 sm:h-20 w-auto object-contain select-none"
             draggable="false"
+            // Footer is below the fold — defer loading
+            loading="lazy"
+            decoding="async"
+            width="1200"
+            height="419"
           />
           <p className="mt-4 text-sm text-white/75 max-w-sm">
             {t.footer.tagline}
