@@ -109,7 +109,7 @@ async function compressImage(file, opts = {}) {
 const EMPTY_FORM = {
   name: "", category: "Economy", year: String(new Date().getFullYear()),
   color: "", seats: 5, doors: 5, transmission: "Automatic",
-  fuel: "Petrol", consumption: "", bags: 2,
+  fuel: "Petrol", consumption: "", bags: 2, carryOn: 1,
   dailyRate: "", weeklyRate: "", monthlyRate: "",
   description: "", longDescription: "",
   features: ["", "", "", "", "", "", "", ""],
@@ -140,6 +140,7 @@ function carToForm(car) {
     fuel: car.fuel || "Petrol",
     consumption: car.consumption || "",
     bags: car.bags ?? 2,
+    carryOn: car.carryOn ?? 1,
     dailyRate: car.dailyRate ?? "",
     weeklyRate: car.weeklyRate ?? "",
     monthlyRate: car.monthlyRate ?? "",
@@ -317,7 +318,7 @@ function CarForm({ token, editCar, onDone }) {
     try {
       const fd = new FormData();
       ["name","category","year","color","seats","doors","transmission","fuel",
-       "consumption","bags","dailyRate","weeklyRate","monthlyRate","description","longDescription"]
+       "consumption","bags","carryOn","dailyRate","weeklyRate","monthlyRate","description","longDescription"]
         .forEach((k) => fd.append(k, form[k]));
       fd.append("features", JSON.stringify(form.features));
       fd.append("highlights", JSON.stringify(form.highlights));
@@ -430,7 +431,10 @@ function CarForm({ token, editCar, onDone }) {
             <input type="number" className={`${inputCls} ${fieldErrors.doors ? "border-red-400 focus:border-red-400 focus:ring-red-400/20" : ""}`} value={form.doors} onChange={(e) => set("doors", e.target.value)} min="2" max="5" />
           </Field>
           <Field label="Luggage Bags" error={fieldErrors.bags}>
-            <input type="number" className={`${inputCls} ${fieldErrors.bags ? "border-red-400 focus:border-red-400 focus:ring-red-400/20" : ""}`} value={form.bags} onChange={(e) => set("bags", e.target.value)} min="1" max="10" />
+            <input type="number" className={`${inputCls} ${fieldErrors.bags ? "border-red-400 focus:border-red-400 focus:ring-red-400/20" : ""}`} value={form.bags} onChange={(e) => set("bags", e.target.value)} min="0" max="10" />
+          </Field>
+          <Field label="Carry-on Bags" error={fieldErrors.carryOn}>
+            <input type="number" className={`${inputCls} ${fieldErrors.carryOn ? "border-red-400 focus:border-red-400 focus:ring-red-400/20" : ""}`} value={form.carryOn} onChange={(e) => set("carryOn", e.target.value)} min="0" max="10" />
           </Field>
           <Field label="Transmission" error={fieldErrors.transmission}>
             <select className={`${selectCls} ${fieldErrors.transmission ? "border-red-400 focus:border-red-400 focus:ring-red-400/20" : ""}`} value={form.transmission} onChange={(e) => set("transmission", e.target.value)}>

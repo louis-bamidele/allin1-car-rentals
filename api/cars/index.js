@@ -55,7 +55,7 @@ export default async function handler(req, res) {
       const {
         name, category,
         seats, doors, transmission, fuel, consumption,
-        bags, dailyRate, weeklyRate, monthlyRate, year, color,
+        bags, carryOn, dailyRate, weeklyRate, monthlyRate, year, color,
         description, longDescription,
       } = req.body;
 
@@ -94,6 +94,7 @@ export default async function handler(req, res) {
         fuel:         fuel         || undefined,
         consumption:  consumption  || "",
         bags:         bags         ? Number(bags)       : undefined,
+        carryOn:      carryOn      != null && carryOn !== "" ? Number(carryOn) : undefined,
         dailyRate:    Number(dailyRate),
         weeklyRate:   weeklyRate   ? Number(weeklyRate)  : 0,
         monthlyRate:  monthlyRate  ? Number(monthlyRate) : 0,

@@ -340,6 +340,7 @@ export default function CarDetails() {
                 <Row label={t.carDetails.specsLabels.fuel} value={car.fuel} />
                 <Row label={t.carDetails.specsLabels.consumption} value={car.consumption} />
                 <Row label={t.carDetails.specsLabels.luggageLabel} value={car.bags ? `${car.bags} ${t.carDetails.specsLabels.luggage}` : null} />
+                <Row label={t.carDetails.specsLabels.carryOnLabel} value={car.carryOn ? `${car.carryOn} ${t.carDetails.specsLabels.carryOn}` : null} />
               </dl>
             </div>
 

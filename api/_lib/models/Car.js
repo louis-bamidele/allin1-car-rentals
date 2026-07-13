@@ -11,6 +11,7 @@ const carSchema = new mongoose.Schema(
     fuel:           { type: String, default: "Petrol" },
     consumption:    { type: String, default: "" },
     bags:           { type: Number, default: 2 },
+    carryOn:        { type: Number, default: 1 },
     dailyRate:      { type: Number, required: true },
     weeklyRate:     { type: Number, default: 0 },
     monthlyRate:    { type: Number, default: 0 },
