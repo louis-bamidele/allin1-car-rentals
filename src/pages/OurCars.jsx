@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
-import { getCars } from "../lib/api";
+import { getCars, getCategories } from "../lib/api";
 import { imgUrl } from "../lib/cloudinary";
 import { SeatIcon, GearIcon, FuelIcon, ArrowIcon } from "../components/Icons";
 import CarsLoader from "../components/CarsLoader";
 import Seo from "../components/Seo";
 import { useLang } from "../contexts/LanguageContext";
 
-// DB categories stay in English — used as filter keys
-const DB_CATEGORIES = ["All", "Economy", "Comfort", "SUV"];
+function catLabel(cat, lang) {
+  return (cat.translations && cat.translations[lang]) || cat.name;
+}
 
 const page = {
   initial: { opacity: 0 },
@@ -34,7 +35,8 @@ export default function OurCars() {
   const [loading, setLoading] = useState(true);
   const [messageIndex, setMessageIndex] = useState(0);
   const [fleet, setFleet] = useState([]);
-  const { t } = useLang();
+  const [categories, setCategories] = useState([]);
+  const { t, lang } = useLang();
 
   useEffect(() => {
     let cancelled = false;
@@ -44,8 +46,8 @@ export default function OurCars() {
       setMessageIndex((i) => Math.min(i + 1, 3));
     }, MESSAGE_STEP_MS);
 
-    getCars().then((data) => {
-      if (!cancelled) setFleet(data);
+    Promise.all([getCars(), getCategories()]).then(([data, cats]) => {
+      if (!cancelled) { setFleet(data); setCategories(cats); }
       const imagesToPreload = data.map((c) => c.image);
       return Promise.all(imagesToPreload.map(preloadImage));
     }).then(() => {
@@ -64,8 +66,17 @@ export default function OurCars() {
     };
   }, []);
 
-  const activeDb = DB_CATEGORIES[activeIndex];
-  const cars = activeDb === "All" ? fleet : fleet.filter((c) => c.category === activeDb);
+  const tabs = [{ _id: "all", name: "All", isAll: true }, ...categories];
+  const activeTab = tabs[activeIndex] || tabs[0];
+  const cars = activeTab.isAll
+    ? fleet
+    : fleet.filter((c) => c.category === activeTab.name);
+
+  const catMap = new Map(categories.map((c) => [c.name, c]));
+  const labelFor = (carCategory) => {
+    const cat = catMap.get(carCategory);
+    return cat ? catLabel(cat, lang) : carCategory;
+  };
 
   return (
     <>
@@ -137,9 +148,9 @@ export default function OurCars() {
           <section className="section">
             <div className="container-x">
               <div className="flex flex-wrap gap-2 mb-8">
-                {t.ourCars.categories.map((label, i) => (
+                {tabs.map((tab, i) => (
                   <button
-                    key={DB_CATEGORIES[i]}
+                    key={tab._id || tab.name}
                     onClick={() => setActiveIndex(i)}
                     className={`px-4 py-2 rounded-full text-sm font-semibold transition ${
                       activeIndex === i
@@ -147,7 +158,7 @@ export default function OurCars() {
                         : "bg-cream-50 text-navy-900 hover:bg-cream-100"
                     }`}
                   >
-                    {label}
+                    {tab.isAll ? t.ourCars.allLabel : catLabel(tab, lang)}
                   </button>
                 ))}
               </div>
@@ -180,7 +191,7 @@ export default function OurCars() {
                     <div className="p-5 sm:p-6 flex flex-col flex-1">
                       <div className="flex items-center justify-between">
                         <span className="text-xs font-semibold uppercase tracking-wider text-gold-600">
-                          {car.category}
+                          {labelFor(car.category)}
                         </span>
                         <div className="text-right">
                           <div className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">

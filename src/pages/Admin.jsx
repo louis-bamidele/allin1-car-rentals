@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from "react";
-import { login, getAdminCars, getCar, addCar, updateCar, deleteCar, toggleAvailability, setUnauthorizedHandler } from "../lib/api";
+import {
+  login, getAdminCars, getCar, addCar, updateCar, deleteCar, toggleAvailability, setUnauthorizedHandler,
+  getCategories, addCategory, updateCategory, deleteCategory,
+} from "../lib/api";
 import Seo from "../components/Seo";
-
-const CATEGORIES = ["Economy", "Comfort", "SUV"];
 const TRANSMISSIONS = ["Automatic", "Manual"];
 const FUELS = ["Petrol", "Diesel", "Hybrid", "Electric"];
 
@@ -223,7 +224,7 @@ const inputCls = "w-full rounded-xl border border-navy-100 px-3 py-2.5 text-navy
 const selectCls = inputCls + " bg-white";
 
 // ─── Car Form (add + edit) ────────────────────────────────────────────────────
-function CarForm({ token, editCar, onDone }) {
+function CarForm({ token, editCar, categories = [], onDone }) {
   const isEdit = !!editCar;
   const [form, setForm] = useState(isEdit ? carToForm(editCar) : EMPTY_FORM);
   const [loading, setLoading] = useState(false);
@@ -393,7 +394,8 @@ function CarForm({ token, editCar, onDone }) {
               value={form.category}
               onChange={(e) => set("category", e.target.value)}
             >
-              {CATEGORIES.map((c) => <option key={c}>{c}</option>)}
+              {categories.length === 0 && <option value="">Loading…</option>}
+              {categories.map((c) => <option key={c.slug || c.name} value={c.name}>{c.name}</option>)}
             </select>
           </Field>
           <Field label="Year" error={fieldErrors.year || yearError}>
@@ -600,9 +602,176 @@ function CarForm({ token, editCar, onDone }) {
   );
 }
 
+// ─── Categories Manager ───────────────────────────────────────────────────────
+function CategoriesManager({ token, categories, reload }) {
+  const [name, setName] = useState("");
+  const [nameEs, setNameEs] = useState("");
+  const [nameNl, setNameNl] = useState("");
+  const [adding, setAdding] = useState(false);
+  const [error, setError] = useState("");
+  const [editingId, setEditingId] = useState(null);
+  const [editDraft, setEditDraft] = useState({ name: "", es: "", nl: "" });
+  const [savingId, setSavingId] = useState(null);
+  const [deletingId, setDeletingId] = useState(null);
+
+  async function handleAdd(e) {
+    e.preventDefault();
+    if (!name.trim()) return;
+    setAdding(true); setError("");
+    try {
+      await addCategory({ name, translations: { es: nameEs, nl: nameNl } }, token);
+      setName(""); setNameEs(""); setNameNl("");
+      await reload();
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setAdding(false);
+    }
+  }
+
+  function startEdit(c) {
+    setEditingId(c._id);
+    setEditDraft({ name: c.name, es: c.translations?.es || "", nl: c.translations?.nl || "" });
+  }
+  function cancelEdit() {
+    setEditingId(null);
+    setEditDraft({ name: "", es: "", nl: "" });
+  }
+  async function saveEdit(c) {
+    setSavingId(c._id); setError("");
+    try {
+      await updateCategory(c._id, {
+        name: editDraft.name,
+        translations: { es: editDraft.es, nl: editDraft.nl },
+      }, token);
+      cancelEdit();
+      await reload();
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setSavingId(null);
+    }
+  }
+  async function handleDelete(c) {
+    if (!confirm(`Delete category "${c.name}"?`)) return;
+    setDeletingId(c._id); setError("");
+    try {
+      await deleteCategory(c._id, token);
+      await reload();
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setDeletingId(null);
+    }
+  }
+
+  return (
+    <div>
+      <h2 className="text-lg font-bold text-navy-900 mb-6">Categories</h2>
+
+      {error && (
+        <div className="mb-4 bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl px-4 py-3">
+          {error}
+        </div>
+      )}
+
+      {/* Add new category */}
+      <div className="bg-white rounded-2xl shadow-card p-5 sm:p-6 mb-6">
+        <h3 className="text-xs font-bold uppercase tracking-widest text-navy-900/40 mb-4">Add category</h3>
+        <form onSubmit={handleAdd} className="grid sm:grid-cols-4 gap-3">
+          <Field label="Name (English)" required>
+            <input required className={inputCls} value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Convertible" />
+          </Field>
+          <Field label="Spanish name">
+            <input className={inputCls} value={nameEs} onChange={(e) => setNameEs(e.target.value)} placeholder="e.g. Descapotable" />
+          </Field>
+          <Field label="Dutch name">
+            <input className={inputCls} value={nameNl} onChange={(e) => setNameNl(e.target.value)} placeholder="e.g. Cabrio" />
+          </Field>
+          <div className="flex items-end">
+            <button type="submit" disabled={adding || !name.trim()}
+              className="btn-primary w-full justify-center py-2.5 disabled:opacity-60">
+              {adding ? "Adding…" : "+ Add"}
+            </button>
+          </div>
+        </form>
+      </div>
+
+      {/* Existing categories */}
+      <div className="bg-white rounded-2xl shadow-card overflow-hidden">
+        {categories.length === 0 ? (
+          <p className="text-slate-500 text-sm p-6">No categories yet. Add your first one above.</p>
+        ) : (
+          <ul className="divide-y divide-navy-100">
+            {categories.map((c) => {
+              const isEditing = editingId === c._id;
+              const isSaving = savingId === c._id;
+              const isDeleting = deletingId === c._id;
+              return (
+                <li key={c._id} className="p-4 sm:p-5">
+                  {isEditing ? (
+                    <div className="grid sm:grid-cols-4 gap-3 items-end">
+                      <Field label="Name (English)" required>
+                        <input className={inputCls} value={editDraft.name}
+                          onChange={(e) => setEditDraft({ ...editDraft, name: e.target.value })} />
+                      </Field>
+                      <Field label="Spanish name">
+                        <input className={inputCls} value={editDraft.es}
+                          onChange={(e) => setEditDraft({ ...editDraft, es: e.target.value })} />
+                      </Field>
+                      <Field label="Dutch name">
+                        <input className={inputCls} value={editDraft.nl}
+                          onChange={(e) => setEditDraft({ ...editDraft, nl: e.target.value })} />
+                      </Field>
+                      <div className="flex gap-2">
+                        <button onClick={() => saveEdit(c)} disabled={isSaving || !editDraft.name.trim()}
+                          className="btn-primary flex-1 justify-center py-2 disabled:opacity-60">
+                          {isSaving ? "Saving…" : "Save"}
+                        </button>
+                        <button onClick={cancelEdit} disabled={isSaving} className="btn-ghost flex-1 justify-center py-2">
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-between gap-4">
+                      <div className="min-w-0">
+                        <div className="font-semibold text-navy-900">{c.name}</div>
+                        <div className="text-xs text-slate-500 mt-0.5">
+                          {c.translations?.es && <span>ES: {c.translations.es}</span>}
+                          {c.translations?.es && c.translations?.nl && <span> · </span>}
+                          {c.translations?.nl && <span>NL: {c.translations.nl}</span>}
+                          {!c.translations?.es && !c.translations?.nl && (
+                            <span className="italic text-slate-400">No translations set</span>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex gap-2 shrink-0">
+                        <button onClick={() => startEdit(c)}
+                          className="text-sm text-navy-900 border border-navy-200 hover:bg-navy-50 rounded-xl px-4 py-1.5 font-medium">
+                          Rename
+                        </button>
+                        <button onClick={() => handleDelete(c)} disabled={isDeleting}
+                          className="text-sm text-red-600 border border-red-200 hover:bg-red-50 rounded-xl px-4 py-1.5 font-medium disabled:opacity-60">
+                          {isDeleting ? "Deleting…" : "Delete"}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // ─── Dashboard ─────────────────────────────────────────────────────────────────
 function Dashboard({ token, onLogout }) {
   const [cars, setCars] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [deleteId, setDeleteId] = useState(null);
   const [deleting, setDeleting] = useState(false);
@@ -617,7 +786,12 @@ function Dashboard({ token, onLogout }) {
     finally { setLoading(false); }
   }
 
-  useEffect(() => { loadCars(); }, []);
+  async function loadCategories() {
+    try { setCategories(await getCategories()); }
+    catch { setCategories([]); }
+  }
+
+  useEffect(() => { loadCars(); loadCategories(); }, []);
 
   async function handleDelete(id) {
     setDeleting(true);
@@ -676,7 +850,7 @@ function Dashboard({ token, onLogout }) {
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
         {/* Tabs */}
-        <div className="flex gap-2 mb-8">
+        <div className="flex gap-2 mb-8 flex-wrap">
           <button onClick={() => { setTab("fleet"); setEditCar(null); }}
             className={`px-5 py-2.5 rounded-xl text-sm font-semibold transition ${tab === "fleet" ? "bg-navy-900 text-white" : "bg-white text-navy-900 hover:bg-cream-100"}`}>
             Fleet ({cars.length})
@@ -684,6 +858,10 @@ function Dashboard({ token, onLogout }) {
           <button onClick={() => { setTab("add"); setEditCar(null); }}
             className={`px-5 py-2.5 rounded-xl text-sm font-semibold transition ${tab === "add" ? "bg-navy-900 text-white" : "bg-white text-navy-900 hover:bg-cream-100"}`}>
             + Add New Car
+          </button>
+          <button onClick={() => { setTab("categories"); setEditCar(null); }}
+            className={`px-5 py-2.5 rounded-xl text-sm font-semibold transition ${tab === "categories" ? "bg-navy-900 text-white" : "bg-white text-navy-900 hover:bg-cream-100"}`}>
+            Categories ({categories.length})
           </button>
           {tab === "edit" && editCar && (
             <span className="px-5 py-2.5 rounded-xl text-sm font-semibold bg-gold-500 text-navy-900">
@@ -764,7 +942,11 @@ function Dashboard({ token, onLogout }) {
           <div>
             <h2 className="text-lg font-bold text-navy-900 mb-6">Add New Car</h2>
             <div className="bg-white rounded-2xl shadow-card p-6 sm:p-8">
-              <CarForm token={token} onDone={() => { loadCars(); setTab("fleet"); }} />
+              <CarForm
+                token={token}
+                categories={categories}
+                onDone={() => { loadCars(); setTab("fleet"); }}
+              />
             </div>
           </div>
         )}
@@ -777,10 +959,20 @@ function Dashboard({ token, onLogout }) {
               <CarForm
                 token={token}
                 editCar={editCar}
+                categories={categories}
                 onDone={() => { loadCars(); setTab("fleet"); setEditCar(null); }}
               />
             </div>
           </div>
+        )}
+
+        {/* Categories tab */}
+        {tab === "categories" && (
+          <CategoriesManager
+            token={token}
+            categories={categories}
+            reload={loadCategories}
+          />
         )}
       </div>
 

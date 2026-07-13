@@ -1,28 +1,47 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { getCars } from "../lib/api";
+import { getCars, getCategories } from "../lib/api";
 import { imgUrl } from "../lib/cloudinary";
 import { SeatIcon, GearIcon, FuelIcon, ArrowIcon } from "./Icons";
 import Reveal, { fadeUp, stagger } from "./motion/Reveal";
 import { useLang } from "../contexts/LanguageContext";
 
-// DB categories stay in English — used as filter keys
-const DB_CATEGORIES = ["All", "Economy", "Comfort", "SUV"];
+// Resolve a Category's display name for the active language, falling back
+// to the canonical English name.
+function catLabel(cat, lang) {
+  return (cat.translations && cat.translations[lang]) || cat.name;
+}
 
 export default function Fleet() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [fleet, setFleet] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [fetching, setFetching] = useState(true);
-  const { t } = useLang();
+  const { t, lang } = useLang();
 
   useEffect(() => {
-    getCars().then(setFleet).catch(() => setFleet([])).finally(() => setFetching(false));
+    Promise.all([getCars(), getCategories()])
+      .then(([cars, cats]) => { setFleet(cars); setCategories(cats); })
+      .catch(() => { setFleet([]); setCategories([]); })
+      .finally(() => setFetching(false));
   }, []);
 
-  const activeDb = DB_CATEGORIES[activeIndex];
-  const cars = activeDb === "All" ? fleet : fleet.filter((c) => c.category === activeDb);
+  // Filter tabs: virtual "All" first, then every category (ordered by admin).
+  const tabs = [{ _id: "all", name: "All", isAll: true }, ...categories];
+  const activeTab = tabs[activeIndex] || tabs[0];
+  const cars = activeTab.isAll
+    ? fleet
+    : fleet.filter((c) => c.category === activeTab.name);
   const visible = cars.slice(0, 6);
+
+  // Look up a car's category label in the active language, falling back to
+  // the canonical name if the category isn't found (e.g. legacy data).
+  const catMap = new Map(categories.map((c) => [c.name, c]));
+  const labelFor = (carCategory) => {
+    const cat = catMap.get(carCategory);
+    return cat ? catLabel(cat, lang) : carCategory;
+  };
 
   return (
     <section id="fleet" className="section">
@@ -38,9 +57,9 @@ export default function Fleet() {
             </p>
           </Reveal>
           <div className="flex flex-wrap gap-2">
-            {t.fleet.categories.map((label, i) => (
+            {tabs.map((tab, i) => (
               <motion.button
-                key={DB_CATEGORIES[i]}
+                key={tab._id || tab.name}
                 onClick={() => setActiveIndex(i)}
                 whileTap={{ scale: 0.96 }}
                 className={`px-4 py-2 rounded-full text-sm font-semibold transition ${
@@ -49,7 +68,7 @@ export default function Fleet() {
                     : "bg-cream-50 text-navy-900 hover:bg-cream-100"
                 }`}
               >
-                {label}
+                {tab.isAll ? t.fleet.allLabel : catLabel(tab, lang)}
               </motion.button>
             ))}
           </div>
@@ -98,7 +117,7 @@ export default function Fleet() {
                 <div className="p-5 sm:p-6 flex flex-col flex-1">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-semibold uppercase tracking-wider text-gold-600">
-                      {car.category}
+                      {labelFor(car.category)}
                     </span>
                     <div className="text-right">
                       <div className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">

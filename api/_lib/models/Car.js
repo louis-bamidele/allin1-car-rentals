@@ -4,7 +4,7 @@ const carSchema = new mongoose.Schema(
   {
     slug:           { type: String, required: true, unique: true, lowercase: true, trim: true },
     name:           { type: String, required: true, trim: true },
-    category:       { type: String, required: true, enum: ["Economy", "Comfort", "SUV"] },
+    category:       { type: String, required: true },
     seats:          { type: Number, default: 5 },
     doors:          { type: Number, default: 4 },
     transmission:   { type: String, default: "Automatic" },
