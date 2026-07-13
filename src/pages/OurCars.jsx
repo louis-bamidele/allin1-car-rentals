@@ -5,6 +5,7 @@ import { getCars } from "../lib/api";
 import { imgUrl } from "../lib/cloudinary";
 import { SeatIcon, GearIcon, FuelIcon, ArrowIcon } from "../components/Icons";
 import CarsLoader from "../components/CarsLoader";
+import Seo from "../components/Seo";
 import { useLang } from "../contexts/LanguageContext";
 
 // DB categories stay in English — used as filter keys
@@ -67,7 +68,13 @@ export default function OurCars() {
   const cars = activeDb === "All" ? fleet : fleet.filter((c) => c.category === activeDb);
 
   return (
-    <AnimatePresence mode="wait">
+    <>
+      <Seo
+        title="Rental Car Fleet in Curaçao — Economy, Comfort & SUV | All in 1"
+        description="Browse the full All in 1 fleet of rental cars in Curaçao. Kia Picanto, Rio, Soul, Sportage, Toyota Yaris, Hyundai Tucson. Free Hato Airport delivery, unlimited mileage, all-inclusive pricing."
+        path="/cars"
+      />
+      <AnimatePresence mode="wait">
       {loading ? (
         <CarsLoader key="loader" messageIndex={messageIndex} />
       ) : (
@@ -163,7 +170,7 @@ export default function OurCars() {
                       <div className="aspect-[16/10] overflow-hidden bg-gradient-to-br from-cream-50 to-cream-100">
                         <img
                           src={imgUrl(car.image, { width: 600 })}
-                          alt={car.name}
+                          alt={`${car.name} rental car in Curaçao`}
                           className="w-full h-full object-cover transition duration-500 group-hover:scale-105"
                           loading="lazy"
                           decoding="async"
@@ -225,6 +232,7 @@ export default function OurCars() {
           </section>
         </motion.div>
       )}
-    </AnimatePresence>
+      </AnimatePresence>
+    </>
   );
 }

@@ -86,7 +86,7 @@ export default function Fleet() {
                   <div className="aspect-[16/10] overflow-hidden bg-gradient-to-br from-cream-50 to-cream-100">
                     <motion.img
                       src={imgUrl(car.image, { width: 600 })}
-                      alt={car.name}
+                      alt={`${car.name} rental car in Curaçao`}
                       className="w-full h-full object-cover"
                       whileHover={{ scale: 1.06 }}
                       transition={{ duration: 0.5 }}

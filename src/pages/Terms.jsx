@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowIcon } from "../components/Icons";
+import Seo from "../components/Seo";
 import { useLang } from "../contexts/LanguageContext";
 
 const UPDATED = "May 15, 2026";
@@ -96,9 +97,15 @@ export default function Terms() {
   const tr = t.terms;
 
   return (
-    <motion.div variants={page} initial="initial" animate="animate" exit="exit">
-      {/* ── Header ─────────────────────────────────────────── */}
-      <section className="pt-28 sm:pt-32 lg:pt-40 pb-14 bg-navy-900 text-white relative overflow-hidden">
+    <>
+      <Seo
+        title="Terms of Service & Privacy Policy | All in 1 Car Rentals Curaçao"
+        description="Rental terms, insurance, security deposit, cancellation and privacy policy for All in 1 Car Rentals in Curaçao."
+        path="/terms"
+      />
+      <motion.div variants={page} initial="initial" animate="animate" exit="exit">
+        {/* ── Header ─────────────────────────────────────────── */}
+        <section className="pt-28 sm:pt-32 lg:pt-40 pb-14 bg-navy-900 text-white relative overflow-hidden">
         <div className="absolute -right-24 -top-24 w-96 h-96 rounded-full bg-gold-500/10 blur-3xl pointer-events-none" />
 
         {/* SVG line drawing */}
@@ -348,5 +355,6 @@ export default function Terms() {
         </main>
       </div>
     </motion.div>
+    </>
   );
 }

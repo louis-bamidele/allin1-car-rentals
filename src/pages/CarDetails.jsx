@@ -15,6 +15,7 @@ import {
   ClockIcon,
 } from "../components/Icons";
 import Reveal, { fadeUp, stagger } from "../components/motion/Reveal";
+import Seo from "../components/Seo";
 import { useLang } from "../contexts/LanguageContext";
 
 const page = {
@@ -89,8 +90,53 @@ export default function CarDetails() {
     `Hi All in 1, I have a question about the ${car.name}.`
   )}`;
 
+  // Structured data (Vehicle + Offer) — Google Rich Results for individual cars
+  const vehicleSchema = {
+    "@context": "https://schema.org",
+    "@type": "Vehicle",
+    name: car.name,
+    vehicleModelDate: car.year,
+    color: car.color || undefined,
+    numberOfDoors: car.doors,
+    seatingCapacity: car.seats,
+    fuelType: car.fuel,
+    vehicleTransmission: car.transmission,
+    image: (car.gallery || []).map((u) => imgUrl(u, { width: 1200 })).filter(Boolean),
+    description: car.longDescription || car.description,
+    brand: {
+      "@type": "Brand",
+      name: (car.name || "").split(" ")[0] || "All in 1",
+    },
+    offers: {
+      "@type": "Offer",
+      priceCurrency: "USD",
+      price: car.dailyRate,
+      priceValidUntil: `${new Date().getFullYear() + 1}-12-31`,
+      availability: car.available !== false
+        ? "https://schema.org/InStock"
+        : "https://schema.org/OutOfStock",
+      url: `https://www.allin1carrental.com/car/${car.slug}`,
+      seller: {
+        "@type": "AutoRental",
+        name: "All in 1 Car Rentals",
+        telephone: "+59995178686",
+      },
+    },
+  };
+
   return (
     <motion.div variants={page} initial="initial" animate="animate" exit="exit">
+      <Seo
+        title={`${car.name} Rental in Curaçao — from $${car.dailyRate}/day | All in 1`}
+        description={
+          car.description ||
+          `Rent the ${car.name} in Curaçao from $${car.dailyRate}/day. Free Hato Airport delivery, unlimited mileage, all-inclusive pricing.`
+        }
+        path={`/car/${car.slug}`}
+        ogImage={car.image ? imgUrl(car.image, { width: 1200 }) : undefined}
+        ogType="product"
+        schema={vehicleSchema}
+      />
       <section className="pt-28 sm:pt-32 lg:pt-40 pb-8 bg-navy-900 text-white">
         <div className="container-x">
           <nav className="text-xs sm:text-sm text-white/70">

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { login, getAdminCars, getCar, addCar, updateCar, deleteCar, toggleAvailability, setUnauthorizedHandler } from "../lib/api";
+import Seo from "../components/Seo";
 
 const CATEGORIES = ["Economy", "Comfort", "SUV"];
 const TRANSMISSIONS = ["Automatic", "Manual"];
@@ -818,6 +819,10 @@ export default function Admin() {
     return () => setUnauthorizedHandler(null);
   }, []);
 
-  if (!token) return <LoginScreen onLogin={setToken} />;
-  return <Dashboard token={token} onLogout={handleLogout} />;
+  return (
+    <>
+      <Seo title="Admin — All in 1 Car Rentals" description="Admin panel." path="/admin" noindex />
+      {!token ? <LoginScreen onLogin={setToken} /> : <Dashboard token={token} onLogout={handleLogout} />}
+    </>
+  );
 }

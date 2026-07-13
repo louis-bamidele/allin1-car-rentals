@@ -9,6 +9,7 @@ import About from "../components/About";
 import Testimonials from "../components/Testimonials";
 import FAQ from "../components/FAQ";
 import Contact from "../components/Contact";
+import Seo from "../components/Seo";
 
 const page = {
   initial: { opacity: 0 },
@@ -18,17 +19,24 @@ const page = {
 
 export default function Home() {
   return (
-    <motion.div variants={page} initial="initial" animate="animate" exit="exit">
-      <DestinationBanner />
-      <Hero />
-      <WhyUs />
-      <Fleet />
-      <HowItWorks />
-      <Services />
-      <About />
-      <Testimonials />
-      <FAQ />
-      <Contact />
-    </motion.div>
+    <>
+      <Seo
+        title="Car Rental Curaçao | Free Airport Delivery from $35/day | All in 1"
+        description="Rent a car in Curaçao from $35/day. Economy, comfort & SUV rentals with free Hato Airport delivery, unlimited mileage, and all-inclusive pricing. Locally owned, book on WhatsApp in minutes."
+        path="/"
+      />
+      <motion.div variants={page} initial="initial" animate="animate" exit="exit">
+        <DestinationBanner />
+        <Hero />
+        <WhyUs />
+        <Fleet />
+        <HowItWorks />
+        <Services />
+        <About />
+        <Testimonials />
+        <FAQ />
+        <Contact />
+      </motion.div>
+    </>
   );
 }
