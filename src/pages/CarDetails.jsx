@@ -203,10 +203,10 @@ export default function CarDetails() {
             )}
 
             <div className="mt-5">
-              <div className="text-[11px] uppercase tracking-wider text-slate-400 font-semibold">
+              <div className="text-xs uppercase tracking-widest text-gold-600 font-bold">
                 {t.carDetails.startingFrom}
               </div>
-              <div className="mt-0.5 flex items-baseline gap-2">
+              <div className="mt-1 flex items-baseline gap-2">
                 <div className="text-3xl sm:text-4xl font-display font-bold text-navy-900">
                   ${car.dailyRate}
                 </div>
@@ -448,7 +448,10 @@ export default function CarDetails() {
                       </div>
                       <div className="mt-1 font-semibold text-navy-900">{c.name}</div>
                       <div className="mt-1 text-sm text-slate-500">
-                        {t.carDetails.startingFrom} ${c.dailyRate} {t.carDetails.perDay}
+                        <span className="uppercase tracking-widest text-[10px] text-gold-600 font-bold mr-1">
+                          {t.carDetails.startingFrom}
+                        </span>
+                        ${c.dailyRate} {t.carDetails.perDay}
                       </div>
                     </div>
                   </Link>

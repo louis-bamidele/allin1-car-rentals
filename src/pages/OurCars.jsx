@@ -194,7 +194,7 @@ export default function OurCars() {
                           {labelFor(car.category)}
                         </span>
                         <div className="text-right">
-                          <div className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">
+                          <div className="text-[11px] uppercase tracking-widest text-gold-600 font-bold">
                             {t.ourCars.startingFrom}
                           </div>
                           <div className="text-2xl font-display font-bold text-navy-900 leading-tight">
