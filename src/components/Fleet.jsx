@@ -101,7 +101,10 @@ export default function Fleet() {
                       {car.category}
                     </span>
                     <div className="text-right">
-                      <div className="text-2xl font-display font-bold text-navy-900">
+                      <div className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">
+                        {t.fleet.startingFrom}
+                      </div>
+                      <div className="text-2xl font-display font-bold text-navy-900 leading-tight">
                         ${car.dailyRate}
                         <span className="text-sm font-normal text-slate-500"> {t.fleet.perDay}</span>
                       </div>

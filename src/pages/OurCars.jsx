@@ -175,9 +175,14 @@ export default function OurCars() {
                         <span className="text-xs font-semibold uppercase tracking-wider text-gold-600">
                           {car.category}
                         </span>
-                        <div className="text-2xl font-display font-bold text-navy-900">
-                          ${car.dailyRate}
-                          <span className="text-sm font-normal text-slate-500"> {t.ourCars.perDay}</span>
+                        <div className="text-right">
+                          <div className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">
+                            {t.ourCars.startingFrom}
+                          </div>
+                          <div className="text-2xl font-display font-bold text-navy-900 leading-tight">
+                            ${car.dailyRate}
+                            <span className="text-sm font-normal text-slate-500"> {t.ourCars.perDay}</span>
+                          </div>
                         </div>
                       </div>
                       <h2 className="mt-1 text-xl font-semibold">

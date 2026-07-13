@@ -156,11 +156,16 @@ export default function CarDetails() {
               </p>
             )}
 
-            <div className="mt-5 flex items-baseline gap-2">
-              <div className="text-3xl sm:text-4xl font-display font-bold text-navy-900">
-                ${car.dailyRate}
+            <div className="mt-5">
+              <div className="text-[11px] uppercase tracking-wider text-slate-400 font-semibold">
+                {t.carDetails.startingFrom}
               </div>
-              <div className="text-slate-500 text-sm">{t.carDetails.perDay}</div>
+              <div className="mt-0.5 flex items-baseline gap-2">
+                <div className="text-3xl sm:text-4xl font-display font-bold text-navy-900">
+                  ${car.dailyRate}
+                </div>
+                <div className="text-slate-500 text-sm">{t.carDetails.perDay}</div>
+              </div>
             </div>
             {(car.weeklyRate > 0 || car.monthlyRate > 0) && (
               <div className="mt-1 text-xs text-slate-500">
@@ -396,7 +401,7 @@ export default function CarDetails() {
                       </div>
                       <div className="mt-1 font-semibold text-navy-900">{c.name}</div>
                       <div className="mt-1 text-sm text-slate-500">
-                        ${c.dailyRate} {t.carDetails.perDay}
+                        {t.carDetails.startingFrom} ${c.dailyRate} {t.carDetails.perDay}
                       </div>
                     </div>
                   </Link>
