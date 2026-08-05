@@ -83,6 +83,7 @@ export default function Fleet() {
             <SortMenu
               value={sortOrder}
               onChange={setSortOrder}
+              label={t.fleet.sortLabel}
               options={[
                 { value: "default",    label: t.fleet.sortDefault },
                 { value: "price-asc",  label: t.fleet.sortPriceAsc },

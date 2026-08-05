@@ -12,8 +12,11 @@ import { CheckIcon } from "./Icons";
  *   onChange — called with new value when the user picks an option
  *   options  — [{ value, label }, ...]
  *   variant  — "light" (cream pill, for customer pages) or "admin" (white box)
+ *   label    — optional; if provided, trigger button always shows this string
+ *              instead of the current selection's label (e.g. "Sort price").
+ *              The selected option is still marked inside the open panel.
  */
-export default function SortMenu({ value, onChange, options, variant = "light" }) {
+export default function SortMenu({ value, onChange, options, variant = "light", label }) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
 
@@ -34,6 +37,7 @@ export default function SortMenu({ value, onChange, options, variant = "light" }
   }, [open]);
 
   const currentLabel = options.find((o) => o.value === value)?.label ?? "";
+  const triggerLabel = label ?? currentLabel;
 
   const triggerCls =
     variant === "admin"
@@ -50,7 +54,7 @@ export default function SortMenu({ value, onChange, options, variant = "light" }
         className={`inline-flex items-center gap-2 ${triggerCls} rounded-full px-4 py-2 text-sm font-semibold transition focus:outline-none focus:ring-2 focus:ring-gold-500/40`}
       >
         <SortIcon className="w-4 h-4 text-navy-700" />
-        <span className="whitespace-nowrap">{currentLabel}</span>
+        <span className="whitespace-nowrap">{triggerLabel}</span>
         <ChevronIcon
           className={`w-3.5 h-3.5 text-navy-500 transition-transform ${open ? "rotate-180" : ""}`}
         />

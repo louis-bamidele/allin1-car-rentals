@@ -173,6 +173,7 @@ export default function OurCars() {
                   <SortMenu
                     value={sortOrder}
                     onChange={setSortOrder}
+                    label={t.ourCars.sortLabel}
                     options={[
                       { value: "default",    label: t.ourCars.sortDefault },
                       { value: "price-asc",  label: t.ourCars.sortPriceAsc },

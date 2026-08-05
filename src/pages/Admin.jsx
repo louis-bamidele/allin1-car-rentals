@@ -881,6 +881,7 @@ function Dashboard({ token, onLogout }) {
                 value={sortOrder}
                 onChange={setSortOrder}
                 variant="admin"
+                label="Sort price"
                 options={[
                   { value: "default",    label: "Default order" },
                   { value: "price-asc",  label: "Price: low to high" },
