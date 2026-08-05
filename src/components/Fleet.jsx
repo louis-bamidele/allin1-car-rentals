@@ -5,6 +5,7 @@ import { getCars, getCategories } from "../lib/api";
 import { imgUrl } from "../lib/cloudinary";
 import { SeatIcon, GearIcon, FuelIcon, ArrowIcon } from "./Icons";
 import Reveal, { fadeUp, stagger } from "./motion/Reveal";
+import SortMenu from "./SortMenu";
 import { useLang } from "../contexts/LanguageContext";
 
 // Resolve a Category's display name for the active language, falling back
@@ -78,16 +79,16 @@ export default function Fleet() {
                 {tab.isAll ? t.fleet.allLabel : catLabel(tab, lang)}
               </motion.button>
             ))}
-            {/* Sort selector — matches pill-button aesthetic */}
-            <select
+            {/* Sort selector — custom dropdown matching the pill aesthetic */}
+            <SortMenu
               value={sortOrder}
-              onChange={(e) => setSortOrder(e.target.value)}
-              className="bg-cream-50 text-navy-900 hover:bg-cream-100 border-0 rounded-full px-4 py-2 text-sm font-semibold cursor-pointer focus:outline-none focus:ring-2 focus:ring-gold-500/40 transition"
-            >
-              <option value="default">{t.fleet.sortDefault}</option>
-              <option value="price-asc">{t.fleet.sortPriceAsc}</option>
-              <option value="price-desc">{t.fleet.sortPriceDesc}</option>
-            </select>
+              onChange={setSortOrder}
+              options={[
+                { value: "default",    label: t.fleet.sortDefault },
+                { value: "price-asc",  label: t.fleet.sortPriceAsc },
+                { value: "price-desc", label: t.fleet.sortPriceDesc },
+              ]}
+            />
           </div>
         </div>
 

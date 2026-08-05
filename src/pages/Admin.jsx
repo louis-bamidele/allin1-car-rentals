@@ -4,6 +4,7 @@ import {
   getCategories, addCategory, updateCategory, deleteCategory,
 } from "../lib/api";
 import Seo from "../components/Seo";
+import SortMenu from "../components/SortMenu";
 const TRANSMISSIONS = ["Automatic", "Manual"];
 const FUELS = ["Petrol", "Diesel", "Hybrid", "Electric"];
 
@@ -876,15 +877,16 @@ function Dashboard({ token, onLogout }) {
           <div>
             <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
               <h2 className="text-lg font-bold text-navy-900">Current Fleet</h2>
-              <select
+              <SortMenu
                 value={sortOrder}
-                onChange={(e) => setSortOrder(e.target.value)}
-                className="bg-white border border-navy-100 hover:border-navy-300 rounded-xl px-4 py-2 text-sm font-semibold text-navy-900 cursor-pointer focus:outline-none focus:ring-2 focus:ring-gold-500/40 transition"
-              >
-                <option value="default">Sort: Default</option>
-                <option value="price-asc">Price: low to high</option>
-                <option value="price-desc">Price: high to low</option>
-              </select>
+                onChange={setSortOrder}
+                variant="admin"
+                options={[
+                  { value: "default",    label: "Default order" },
+                  { value: "price-asc",  label: "Price: low to high" },
+                  { value: "price-desc", label: "Price: high to low" },
+                ]}
+              />
             </div>
             {loading ? (
               <div className="flex justify-center py-12">

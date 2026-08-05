@@ -6,6 +6,7 @@ import { imgUrl } from "../lib/cloudinary";
 import { SeatIcon, GearIcon, FuelIcon, ArrowIcon } from "../components/Icons";
 import CarsLoader from "../components/CarsLoader";
 import Seo from "../components/Seo";
+import SortMenu from "../components/SortMenu";
 import { useLang } from "../contexts/LanguageContext";
 
 function catLabel(cat, lang) {
@@ -167,16 +168,18 @@ export default function OurCars() {
                     {tab.isAll ? t.ourCars.allLabel : catLabel(tab, lang)}
                   </button>
                 ))}
-                {/* Sort selector — matches pill-button aesthetic */}
-                <select
-                  value={sortOrder}
-                  onChange={(e) => setSortOrder(e.target.value)}
-                  className="bg-cream-50 text-navy-900 hover:bg-cream-100 border-0 rounded-full px-4 py-2 text-sm font-semibold cursor-pointer focus:outline-none focus:ring-2 focus:ring-gold-500/40 transition sm:ml-auto"
-                >
-                  <option value="default">{t.ourCars.sortDefault}</option>
-                  <option value="price-asc">{t.ourCars.sortPriceAsc}</option>
-                  <option value="price-desc">{t.ourCars.sortPriceDesc}</option>
-                </select>
+                {/* Sort selector — custom dropdown, right-aligned on ≥sm */}
+                <div className="sm:ml-auto">
+                  <SortMenu
+                    value={sortOrder}
+                    onChange={setSortOrder}
+                    options={[
+                      { value: "default",    label: t.ourCars.sortDefault },
+                      { value: "price-asc",  label: t.ourCars.sortPriceAsc },
+                      { value: "price-desc", label: t.ourCars.sortPriceDesc },
+                    ]}
+                  />
+                </div>
               </div>
 
               {cars.length === 0 && (
