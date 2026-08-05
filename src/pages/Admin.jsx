@@ -779,6 +779,7 @@ function Dashboard({ token, onLogout }) {
   const [loadingEditId, setLoadingEditId] = useState(null);
   const [tab, setTab] = useState("fleet");
   const [editCar, setEditCar] = useState(null);
+  const [sortOrder, setSortOrder] = useState("default");
 
   async function loadCars() {
     try { setCars(await getAdminCars(token)); }
@@ -873,7 +874,18 @@ function Dashboard({ token, onLogout }) {
         {/* Fleet tab */}
         {tab === "fleet" && (
           <div>
-            <h2 className="text-lg font-bold text-navy-900 mb-5">Current Fleet</h2>
+            <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
+              <h2 className="text-lg font-bold text-navy-900">Current Fleet</h2>
+              <select
+                value={sortOrder}
+                onChange={(e) => setSortOrder(e.target.value)}
+                className="bg-white border border-navy-100 hover:border-navy-300 rounded-xl px-4 py-2 text-sm font-semibold text-navy-900 cursor-pointer focus:outline-none focus:ring-2 focus:ring-gold-500/40 transition"
+              >
+                <option value="default">Sort: Default</option>
+                <option value="price-asc">Price: low to high</option>
+                <option value="price-desc">Price: high to low</option>
+              </select>
+            </div>
             {loading ? (
               <div className="flex justify-center py-12">
                 <div className="w-8 h-8 rounded-full border-4 border-navy-100 border-t-gold-500 animate-spin" />
@@ -882,7 +894,11 @@ function Dashboard({ token, onLogout }) {
               <p className="text-slate-500 text-sm">No cars yet. Add your first one.</p>
             ) : (
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {cars.map((car) => {
+                {[...cars].sort((a, b) => {
+                  if (sortOrder === "price-asc") return (a.dailyRate || 0) - (b.dailyRate || 0);
+                  if (sortOrder === "price-desc") return (b.dailyRate || 0) - (a.dailyRate || 0);
+                  return 0;
+                }).map((car) => {
                   const isAvailable = car.available !== false;
                   const isToggling = togglingId === car._id;
                   const isLoadingEdit = loadingEditId === car._id;

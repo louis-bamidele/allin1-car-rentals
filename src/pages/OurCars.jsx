@@ -32,6 +32,7 @@ function preloadImage(src) {
 
 export default function OurCars() {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [sortOrder, setSortOrder] = useState("default");
   const [loading, setLoading] = useState(true);
   const [messageIndex, setMessageIndex] = useState(0);
   const [fleet, setFleet] = useState([]);
@@ -68,9 +69,14 @@ export default function OurCars() {
 
   const tabs = [{ _id: "all", name: "All", isAll: true }, ...categories];
   const activeTab = tabs[activeIndex] || tabs[0];
-  const cars = activeTab.isAll
+  const filtered = activeTab.isAll
     ? fleet
     : fleet.filter((c) => c.category === activeTab.name);
+  const cars = [...filtered].sort((a, b) => {
+    if (sortOrder === "price-asc") return (a.dailyRate || 0) - (b.dailyRate || 0);
+    if (sortOrder === "price-desc") return (b.dailyRate || 0) - (a.dailyRate || 0);
+    return 0;
+  });
 
   const catMap = new Map(categories.map((c) => [c.name, c]));
   const labelFor = (carCategory) => {
@@ -147,7 +153,7 @@ export default function OurCars() {
 
           <section className="section">
             <div className="container-x">
-              <div className="flex flex-wrap gap-2 mb-8">
+              <div className="flex flex-wrap items-center gap-2 mb-8">
                 {tabs.map((tab, i) => (
                   <button
                     key={tab._id || tab.name}
@@ -161,6 +167,16 @@ export default function OurCars() {
                     {tab.isAll ? t.ourCars.allLabel : catLabel(tab, lang)}
                   </button>
                 ))}
+                {/* Sort selector — matches pill-button aesthetic */}
+                <select
+                  value={sortOrder}
+                  onChange={(e) => setSortOrder(e.target.value)}
+                  className="bg-cream-50 text-navy-900 hover:bg-cream-100 border-0 rounded-full px-4 py-2 text-sm font-semibold cursor-pointer focus:outline-none focus:ring-2 focus:ring-gold-500/40 transition sm:ml-auto"
+                >
+                  <option value="default">{t.ourCars.sortDefault}</option>
+                  <option value="price-asc">{t.ourCars.sortPriceAsc}</option>
+                  <option value="price-desc">{t.ourCars.sortPriceDesc}</option>
+                </select>
               </div>
 
               {cars.length === 0 && (

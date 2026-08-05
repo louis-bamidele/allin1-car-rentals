@@ -15,6 +15,7 @@ function catLabel(cat, lang) {
 
 export default function Fleet() {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [sortOrder, setSortOrder] = useState("default");
   const [fleet, setFleet] = useState([]);
   const [categories, setCategories] = useState([]);
   const [fetching, setFetching] = useState(true);
@@ -30,9 +31,15 @@ export default function Fleet() {
   // Filter tabs: virtual "All" first, then every category (ordered by admin).
   const tabs = [{ _id: "all", name: "All", isAll: true }, ...categories];
   const activeTab = tabs[activeIndex] || tabs[0];
-  const cars = activeTab.isAll
+  const filtered = activeTab.isAll
     ? fleet
     : fleet.filter((c) => c.category === activeTab.name);
+  // Sort BEFORE slicing so, e.g., "price low→high" shows the 6 cheapest.
+  const cars = [...filtered].sort((a, b) => {
+    if (sortOrder === "price-asc") return (a.dailyRate || 0) - (b.dailyRate || 0);
+    if (sortOrder === "price-desc") return (b.dailyRate || 0) - (a.dailyRate || 0);
+    return 0;
+  });
   const visible = cars.slice(0, 6);
 
   // Look up a car's category label in the active language, falling back to
@@ -56,7 +63,7 @@ export default function Fleet() {
               {t.fleet.body}
             </p>
           </Reveal>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             {tabs.map((tab, i) => (
               <motion.button
                 key={tab._id || tab.name}
@@ -71,6 +78,16 @@ export default function Fleet() {
                 {tab.isAll ? t.fleet.allLabel : catLabel(tab, lang)}
               </motion.button>
             ))}
+            {/* Sort selector — matches pill-button aesthetic */}
+            <select
+              value={sortOrder}
+              onChange={(e) => setSortOrder(e.target.value)}
+              className="bg-cream-50 text-navy-900 hover:bg-cream-100 border-0 rounded-full px-4 py-2 text-sm font-semibold cursor-pointer focus:outline-none focus:ring-2 focus:ring-gold-500/40 transition"
+            >
+              <option value="default">{t.fleet.sortDefault}</option>
+              <option value="price-asc">{t.fleet.sortPriceAsc}</option>
+              <option value="price-desc">{t.fleet.sortPriceDesc}</option>
+            </select>
           </div>
         </div>
 
